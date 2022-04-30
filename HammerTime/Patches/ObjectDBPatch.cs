@@ -41,7 +41,7 @@ namespace HammerTime.Patches {
                         modName = customPiece.SourceMod.Name;
                     } else {
                         piece = pieceGameObject.GetComponent<Piece>();
-                        modName = "Mod";
+                        modName = "Mods";
                     }
 
                     bool combine = CombineModCategories(modName);
@@ -58,11 +58,15 @@ namespace HammerTime.Patches {
                             if (piece.m_category == Piece.PieceCategory.All) {
                                 category = "All";
                             } else {
-                                category = $"Other {((Piece.PieceCategory)categoryId).ToString()}";
+                                category = $"Mods {((Piece.PieceCategory)categoryId).ToString()}";
                             }
                         } else {
-                            category = "Other";
+                            category = "Mods";
                         }
+                    }
+
+                    if (piece.m_category == Piece.PieceCategory.All && pieceTables["_HammerPieceTable"].m_pieces.Any(i => i.name == pieceGameObject.name)) {
+                        continue;
                     }
 
                     PieceManager.Instance.RegisterPieceInPieceTable(pieceGameObject, "_HammerPieceTable", category);

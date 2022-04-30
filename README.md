@@ -3,7 +3,7 @@
 ## About
 Moves all pieces from custom hammers to the vanilla hammer.
 
-![hammertime](Docs/HammerTimePreview.gif)
+![hammertime](https://raw.githubusercontent.com/MSchmoecker/HammerTime/master/Docs/HammerTimePreview.gif)
 
 It can be configured if all categories from a custom hammers should be combined into one.
 This option is automatically generated after the first world loading.
