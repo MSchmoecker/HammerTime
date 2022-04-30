@@ -39,3 +39,12 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
     </PropertyGroup>
 </Project>
 ```
+
+## Links
+- Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/HammerTime/
+- Github: https://github.com/MSchmoecker/HammerTime
+- Discord: Margmas#9562
+
+## Changelog
+0.1.0
+- Release
