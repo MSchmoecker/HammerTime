@@ -33,18 +33,19 @@ namespace HammerTime.Patches {
                     Piece piece;
                     string modName;
                     string category;
-
+                    bool combine;
                     CustomPiece customPiece = PieceManager.Instance.GetPiece(pieceGameObject.name);
 
                     if (customPiece != null) {
                         piece = customPiece.Piece;
                         modName = customPiece.SourceMod.Name;
+                        combine = CombineModCategories(table.Key, modName);
                     } else {
                         piece = pieceGameObject.GetComponent<Piece>();
                         modName = "Mods";
+                        combine = CombineModCategories(table.Key, "Unrecognized Mod");
                     }
 
-                    bool combine = CombineModCategories(modName);
                     int categoryId = (int)piece.m_category;
 
                     if (customPiece != null) {
@@ -61,7 +62,11 @@ namespace HammerTime.Patches {
                                 category = $"Mods {((Piece.PieceCategory)categoryId).ToString()}";
                             }
                         } else {
-                            category = "Mods";
+                            if (combine) {
+                                category = $"{table.Key.Replace("PieceTable", "").Replace("_", "").Replace("HammerTable", "")}";
+                            } else {
+                                category = "Mods";
+                            }
                         }
                     }
 
@@ -74,16 +79,16 @@ namespace HammerTime.Patches {
             }
         }
 
-        private static bool CombineModCategories(string modName) {
-            if (!CombineCategories.ContainsKey(modName)) {
-                const string description = "Combines all categories from a custom hammer into one mod category";
-                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind("Combine Mod Categories", $"Combine Categories of {modName}", false, description);
-                CombineCategories.Add(modName, combine.Value);
+        private static bool CombineModCategories(string pieceTable, string modName) {
+            if (!CombineCategories.ContainsKey(pieceTable)) {
+                string description = $"{modName}. Combines all categories from this custom hammer into one mod category";
+                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind("Combine Mod Categories", $"Combine Categories of {pieceTable}", false, description);
+                CombineCategories.Add(pieceTable, combine.Value);
 
-                combine.SettingChanged += (sender, args) => { CombineCategories[modName] = combine.Value; };
+                combine.SettingChanged += (sender, args) => { CombineCategories[pieceTable] = combine.Value; };
             }
 
-            return CombineCategories[modName];
+            return CombineCategories[pieceTable];
         }
     }
 }

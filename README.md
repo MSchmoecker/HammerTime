@@ -6,8 +6,7 @@ Moves all pieces from custom hammers to the vanilla hammer.
 ![hammertime](https://raw.githubusercontent.com/MSchmoecker/HammerTime/master/Docs/HammerTimePreview.gif)
 
 It can be configured if all categories from a custom hammers should be combined into one.
-This option is automatically generated after the first world loading.
-If other mods use Jotunn they can be toggled individually.
+This option is automatically generated after the first world loading and can be toggled for every hammer individually.
 
 It is not possible to have the same pieces into different hammers with different categories.
 That means the original hammers will be empty. 
