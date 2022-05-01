@@ -10,7 +10,7 @@ That means the original hammers will be empty.
 
 
 ### Config
-All config options are generated automatically after the first world loading for every custom hammer individually.
+All config options are generated automatically after the first world loading for every custom hammer individually.\
 Following Options are available:
 - Combine Mod Categories: Combines all categories from this custom hammer into one category
 - Disable PieceTable: Disables moving pieces from this custom hammer into one the vanilla hammer
@@ -52,5 +52,11 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 
 
 ## Changelog
+0.1.1
+- Added option to disable moving pieces for every custom hammer individually
+- Unified category names and combining for Jotunn and Non-Jotunn mods
+- Changed config options to refer to pieceTable names instead of mod names.
+  This mean old config files are not used anymore and have to be reconfigured.
+
 0.1.0
 - Release
