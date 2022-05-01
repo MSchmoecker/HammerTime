@@ -5,17 +5,23 @@ Moves all pieces from custom hammers to the vanilla hammer.
 
 ![hammertime](https://raw.githubusercontent.com/MSchmoecker/HammerTime/master/Docs/HammerTimePreview.gif)
 
-It can be configured if all categories from a custom hammers should be combined into one.
-This option is automatically generated after the first world loading and can be toggled for every hammer individually.
-
 It is not possible to have the same pieces into different hammers with different categories.
-That means the original hammers will be empty. 
+That means the original hammers will be empty.
+
+
+### Config
+All config options are generated automatically after the first world loading for every custom hammer individually.
+Following Options are available:
+- Combine Mod Categories: Combines all categories from this custom hammer into one category
+- Disable PieceTable: Disables moving pieces from this custom hammer into one the vanilla hammer
+
 
 ## Installation
 This mod requires BepInEx and Jötunn.
 Extract all content of `HammerTime` into the `BepInEx/plugins` folder.
 
 This is a client side only mod and does not execute on a server.
+
 
 ## Development
 BepInEx must be setup at manual or with r2modman/Thunderstore Mod Manager.
@@ -43,6 +49,7 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 - Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/HammerTime/
 - Github: https://github.com/MSchmoecker/HammerTime
 - Discord: Margmas#9562
+
 
 ## Changelog
 0.1.0
