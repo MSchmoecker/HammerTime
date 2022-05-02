@@ -13,6 +13,9 @@ namespace HammerTime.Patches {
     public static class ObjectDBPatch {
         private static readonly Dictionary<string, bool> CombineCategories = new Dictionary<string, bool>();
         private static readonly Dictionary<string, bool> DeactivatedHammers = new Dictionary<string, bool>();
+        private static Dictionary<string, PieceTable> pieceTables;
+        private static Dictionary<int, string> categoryIdToName;
+        private static Dictionary<string, List<PieceItem>> pieces;
 
         [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
         public static void ObjectDBAwake(ObjectDB __instance) {
@@ -20,71 +23,101 @@ namespace HammerTime.Patches {
                 return;
             }
 
-            Dictionary<string, PieceTable> pieceTables = PrefabManager.Cache.GetPrefabs(typeof(PieceTable)).ToDictionary(k => k.Key, v => (PieceTable)v.Value);
+            GetPieceTables();
+            GetCategories();
+            pieces = new Dictionary<string, List<PieceItem>>();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
                 if (table.Key == "_HammerPieceTable" || table.Key == "_HoePieceTable" || table.Key == "_CultivatorPieceTable") {
                     continue;
                 }
 
-                List<string> customCategories = PieceManager.Instance.GetPieceCategories();
-                Dictionary<int, string> customCategoriesMap = customCategories.ToDictionary(i => 4 + customCategories.IndexOf(i), i => i);
-
-                for (int index = 0; index < (int)Piece.PieceCategory.Max; index++) {
-                    customCategoriesMap[index] = ((Piece.PieceCategory)index).ToString();
-                }
+                pieces.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
-                    Piece piece;
-                    string tabName;
-                    string category;
-                    bool combine;
-                    bool disabled;
                     CustomPiece customPiece = PieceManager.Instance.GetPiece(pieceGameObject.name);
 
                     if (customPiece != null) {
-                        piece = customPiece.Piece;
-                        tabName = customPiece.SourceMod.Name;
-                        combine = CombineModCategories(table.Key, customPiece.SourceMod.Name);
-                        disabled = IsHammerDeactivated(table.Key, customPiece.SourceMod.Name);
+                        string mod = customPiece.SourceMod.Name;
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, customPiece.Piece, mod, mod));
                     } else {
-                        piece = pieceGameObject.GetComponent<Piece>();
-                        tabName = CleanTableName(table.Key);
-                        combine = CombineModCategories(table.Key, "Unrecognized Mod");
-                        disabled = IsHammerDeactivated(table.Key, "Unrecognized Mod");
+                        Piece piece = pieceGameObject.GetComponent<Piece>();
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Unrecognized Mod", CleanTableName(table.Key)));
                     }
-
-                    if (disabled) {
-                        break;
-                    }
-
-                    int categoryId = (int)piece.m_category;
-
-                    if (piece.m_category == Piece.PieceCategory.All) {
-                        category = "All";
-
-                        if (pieceTables["_HammerPieceTable"].m_pieces.Any(i => i.name == pieceGameObject.name)) {
-                            continue;
-                        }
-                    } else {
-                        if (customPiece != null) {
-                            if (!combine && customCategoriesMap.ContainsKey(categoryId)) {
-                                category = $"{tabName} {customCategoriesMap[categoryId]}";
-                            } else {
-                                category = tabName;
-                            }
-                        } else {
-                            if (!combine && Enum.IsDefined(typeof(Piece.PieceCategory), categoryId)) {
-                                category = $"{tabName} {((Piece.PieceCategory)categoryId).ToString()}";
-                            } else {
-                                category = $"{tabName}";
-                            }
-                        }
-                    }
-
-                    piece.m_category = PieceManager.Instance.AddPieceCategory("_HammerPieceTable", category);
-                    pieceTables["_HammerPieceTable"].m_pieces.Add(pieceGameObject);
                 }
+            }
+
+            foreach (string pieceTable in pieces.Keys) {
+                UpdatePieceTable(pieceTable);
+            }
+        }
+
+        private static void GetCategories() {
+            List<string> customCategories = PieceManager.Instance.GetPieceCategories();
+            categoryIdToName = customCategories.ToDictionary(i => 4 + customCategories.IndexOf(i), i => i);
+
+            for (int index = 0; index < (int)Piece.PieceCategory.Max; index++) {
+                categoryIdToName[index] = ((Piece.PieceCategory)index).ToString();
+            }
+        }
+
+        private static void GetPieceTables() {
+            pieceTables = PrefabManager.Cache.GetPrefabs(typeof(PieceTable)).ToDictionary(k => k.Key, v => (PieceTable)v.Value);
+        }
+
+        private static void UpdatePieceTable(string pieceTable) {
+            List<PieceItem> pieceMap = pieces[pieceTable];
+
+            if (pieceMap.Count == 0) {
+                return;
+            }
+
+            bool combine = CombineModCategories(pieceTable, pieceMap[0].modName);
+            bool disabled = IsHammerDeactivated(pieceTable, "Unrecognized Mod");
+
+            if (disabled) {
+                return;
+            }
+
+            foreach (PieceItem pieceItem in pieceMap) {
+                string category = GetCategory(pieceItem, combine);
+                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory("_HammerPieceTable", category);
+
+                if (pieceTables[pieceTable].m_pieces.Contains(pieceItem.gameObject)) {
+                    pieceTables[pieceTable].m_pieces.Remove(pieceItem.gameObject);
+                }
+
+                if (pieceTables["_HammerPieceTable"].m_pieces.All(i => i.name != pieceItem.gameObject.name)) {
+                    pieceTables["_HammerPieceTable"].m_pieces.Add(pieceItem.gameObject);
+                }
+            }
+        }
+
+        private static string GetCategory(PieceItem pieceItem, bool combine) {
+            if (pieceItem.piece.m_category == Piece.PieceCategory.All) {
+                return "All";
+            }
+
+            if (!combine && categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
+                return $"{pieceItem.tabName} {categoryIdToName[(int)pieceItem.originalCategory]}";
+            }
+
+            return pieceItem.tabName;
+        }
+
+        private struct PieceItem {
+            public GameObject gameObject;
+            public Piece piece;
+            public string modName;
+            public string tabName;
+            public Piece.PieceCategory originalCategory;
+
+            public PieceItem(GameObject gameObject, Piece piece, string modName, string tabName) {
+                this.gameObject = gameObject;
+                this.piece = piece;
+                originalCategory = piece.m_category;
+                this.modName = modName;
+                this.tabName = tabName;
             }
         }
 
@@ -98,7 +131,10 @@ namespace HammerTime.Patches {
                 ConfigEntry<bool> combine = Plugin.Instance.Config.Bind("Combine Mod Categories", $"Combine Categories of {pieceTable}", false, description);
                 CombineCategories.Add(pieceTable, combine.Value);
 
-                combine.SettingChanged += (sender, args) => { CombineCategories[pieceTable] = combine.Value; };
+                combine.SettingChanged += (sender, args) => {
+                    CombineCategories[pieceTable] = combine.Value;
+                    UpdatePieceTable(pieceTable);
+                };
             }
 
             return CombineCategories[pieceTable];
@@ -113,7 +149,10 @@ namespace HammerTime.Patches {
                 ConfigEntry<bool> combine = Plugin.Instance.Config.Bind("Disable PieceTable", $"Disable PieceTable of {pieceTable}", !defaultDisabled, description);
                 DeactivatedHammers.Add(pieceTable, combine.Value);
 
-                combine.SettingChanged += (sender, args) => { DeactivatedHammers[pieceTable] = combine.Value; };
+                combine.SettingChanged += (sender, args) => {
+                    DeactivatedHammers[pieceTable] = combine.Value;
+                    UpdatePieceTable(pieceTable);
+                };
             }
 
             return DeactivatedHammers[pieceTable];
