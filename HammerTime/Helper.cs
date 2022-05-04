@@ -23,7 +23,17 @@ namespace HammerTime {
         }
 
         public static string CleanTableName(string tableName) {
-            return tableName.Replace("PieceTable", "").Replace("HammerTable", "").Replace("_", "");
+            if (tableName == "_BJORKSNASPieceTable") {
+                return "VALKEA";
+            }
+
+            if (tableName == "OP_HammerTable") {
+                return "Bamboozled";
+            }
+
+            return tableName.Replace("PieceTable", "")
+                            .Replace("HammerTable", "")
+                            .Replace("_", "");
         }
 
         public static string GetCategory(PieceItem pieceItem, bool combine) {
