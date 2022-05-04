@@ -59,20 +59,29 @@ namespace HammerTime.Patches {
             bool combine = Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
             bool disabled = Config.IsHammerDeactivated(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
 
-            if (disabled) {
-                return;
-            }
-
             foreach (PieceItem pieceItem in pieceMap) {
-                string category = Helper.GetCategory(pieceItem, combine);
-                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory("_HammerPieceTable", category);
+                string category;
 
-                if (pieceTables[pieceTable].m_pieces.Contains(pieceItem.gameObject)) {
-                    pieceTables[pieceTable].m_pieces.Remove(pieceItem.gameObject);
+                if (disabled) {
+                    category = categoryIdToName[(int)pieceItem.originalCategory];
+                    MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
+                    continue;
                 }
 
-                if (pieceTables["_HammerPieceTable"].m_pieces.All(i => i.name != pieceItem.gameObject.name)) {
-                    pieceTables["_HammerPieceTable"].m_pieces.Add(pieceItem.gameObject);
+                category = Helper.GetCategory(pieceItem, combine);
+                MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
+            }
+        }
+
+        private static void MovePieceItemToTable(PieceItem pieceItem, string pieceTableFrom, string pieceTableTo, string category) {
+            bool hasPiece = pieceTables[pieceTableTo].m_pieces.Any(i => i.name == pieceItem.gameObject.name);
+
+            if (!hasPiece) {
+                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+                pieceTables[pieceTableTo].m_pieces.Add(pieceItem.gameObject);
+
+                if (pieceTables[pieceTableFrom].m_pieces.Contains(pieceItem.gameObject)) {
+                    pieceTables[pieceTableFrom].m_pieces.Remove(pieceItem.gameObject);
                 }
             }
         }

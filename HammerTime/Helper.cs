@@ -13,6 +13,8 @@ namespace HammerTime {
                 categoryIdToName[index] = ((Piece.PieceCategory)index).ToString();
             }
 
+            categoryIdToName[(int)Piece.PieceCategory.All] = Piece.PieceCategory.All.ToString();
+
             return categoryIdToName;
         }
 
