@@ -54,6 +54,11 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 
 
 ## Changelog
+0.1.2:
+- Fixed a rare bug that caused an index error. This resulted in the player not being able to spawn
+- Fixed tab names were doubled when relogging within the same game session
+- Config options can now be changed at runtime, although old tabs are not cleaned up until restart
+
 0.1.1
 - Added option to disable moving pieces for every custom hammer individually
 - Unified category names and combining for Jotunn and Non-Jotunn mods
