@@ -10,7 +10,9 @@ That means the original hammers will be empty.
 
 
 ### Config
-All config options are generated automatically after the first world loading for every custom hammer individually.\
+All config options are generated automatically after the first world loading for every custom hammer individually.
+They can be changed at runtime but old tabs are not cleaned up until restart.
+
 Following Options are available:
 - Combine Mod Categories: Combines all categories from this custom hammer into one category
 - Disable PieceTable: Disables moving pieces from this custom hammer into one the vanilla hammer
