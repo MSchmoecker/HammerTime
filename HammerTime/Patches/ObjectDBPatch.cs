@@ -75,9 +75,9 @@ namespace HammerTime.Patches {
 
         private static void MovePieceItemToTable(PieceItem pieceItem, string pieceTableFrom, string pieceTableTo, string category) {
             bool hasPiece = pieceTables[pieceTableTo].m_pieces.Any(i => i.name == pieceItem.gameObject.name);
+            pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
 
             if (!hasPiece) {
-                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
                 pieceTables[pieceTableTo].m_pieces.Add(pieceItem.gameObject);
 
                 if (pieceTables[pieceTableFrom].m_pieces.Contains(pieceItem.gameObject)) {
