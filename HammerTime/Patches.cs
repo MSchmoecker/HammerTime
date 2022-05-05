@@ -7,9 +7,9 @@ using Jotunn.Managers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace HammerTime.Patches {
+namespace HammerTime {
     [HarmonyPatch]
-    public static class ObjectDBPatch {
+    public static class Patches {
         private static Dictionary<string, PieceTable> pieceTables;
         public static Dictionary<int, string> categoryIdToName;
         private static Dictionary<string, List<PieceItem>> pieces;
@@ -46,6 +46,23 @@ namespace HammerTime.Patches {
 
             foreach (string pieceTable in pieces.Keys) {
                 UpdatePieceTable(pieceTable);
+            }
+        }
+
+        [HarmonyPatch(typeof(Game), nameof(Game.Logout)), HarmonyPostfix]
+        public static void GameShutdown(ObjectDB __instance) {
+            foreach (KeyValuePair<string, List<PieceItem>> pieces in pieces) {
+                foreach (PieceItem pieceItem in pieces.Value) {
+                    string category;
+
+                    if (categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
+                        category = categoryIdToName[(int)pieceItem.originalCategory];
+                    } else {
+                        category = pieceItem.originalCategory.ToString();
+                    }
+
+                    MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieces.Key, category);
+                }
             }
         }
 

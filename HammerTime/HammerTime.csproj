@@ -96,7 +96,7 @@
     <ItemGroup>
         <Compile Include="Config.cs" />
         <Compile Include="Helper.cs" />
-        <Compile Include="Patches\ObjectDBPatch.cs" />
+        <Compile Include="Patches.cs" />
         <Compile Include="PieceItem.cs" />
         <Compile Include="Plugin.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

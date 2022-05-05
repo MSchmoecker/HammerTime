@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using HammerTime.Patches;
 using Jotunn.Managers;
 
 namespace HammerTime {
@@ -41,8 +40,8 @@ namespace HammerTime {
                 return "All";
             }
 
-            if (!combine && ObjectDBPatch.categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
-                return $"{pieceItem.tabName} {ObjectDBPatch.categoryIdToName[(int)pieceItem.originalCategory]}";
+            if (!combine && Patches.categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
+                return $"{pieceItem.tabName} {Patches.categoryIdToName[(int)pieceItem.originalCategory]}";
             }
 
             return pieceItem.tabName;
