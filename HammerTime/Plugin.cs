@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Bootstrap;
 using HarmonyLib;
 
 namespace HammerTime {
@@ -18,6 +19,12 @@ namespace HammerTime {
 
             harmony = new Harmony(ModGuid);
             harmony.PatchAll();
+        }
+
+        private void Start() {
+            if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.auga")) {
+                harmony.PatchAll(typeof(AugaCompat));
+            }
         }
     }
 }
