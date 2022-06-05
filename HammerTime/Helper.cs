@@ -40,8 +40,8 @@ namespace HammerTime {
                 return "All";
             }
 
-            if (!combine && Patches.categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
-                return $"{pieceItem.tabName} {Patches.categoryIdToName[(int)pieceItem.originalCategory]}";
+            if (!combine && Plugin.categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
+                return $"{pieceItem.tabName} {Plugin.categoryIdToName[(int)pieceItem.originalCategory]}";
             }
 
             return pieceItem.tabName;
