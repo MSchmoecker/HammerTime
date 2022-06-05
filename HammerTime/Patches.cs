@@ -50,7 +50,7 @@ namespace HammerTime {
         }
 
         [HarmonyPatch(typeof(Game), nameof(Game.Logout)), HarmonyPostfix]
-        public static void GameShutdown(ObjectDB __instance) {
+        public static void GameShutdown() {
             foreach (KeyValuePair<string, List<PieceItem>> pieces in pieces) {
                 foreach (PieceItem pieceItem in pieces.Value) {
                     string category;
@@ -78,11 +78,22 @@ namespace HammerTime {
 
             foreach (PieceItem pieceItem in pieceMap) {
                 string category;
+                string categoryUnCombined = Helper.GetCategory(pieceItem, false);
+                string categoryCombined = Helper.GetCategory(pieceItem, true);
 
                 if (disabled) {
+                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
+                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
+
                     category = categoryIdToName[(int)pieceItem.originalCategory];
                     MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
                     continue;
+                }
+
+                if (combine) {
+                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
+                } else {
+                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
                 }
 
                 category = Helper.GetCategory(pieceItem, combine);
