@@ -25,6 +25,26 @@ namespace HammerTime {
             if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.auga")) {
                 harmony.PatchAll(typeof(AugaCompat));
             }
+
+            if (Chainloader.PluginInfos.ContainsKey("marcopogo.PlanBuild")) {
+                harmony.PatchAll(typeof(PlanBuildPatch));
+            } else {
+                harmony.PatchAll(typeof(ObjectDBPatch));
+            }
+        }
+
+        public class PlanBuildPatch {
+            [HarmonyPatch("PlanBuild.Plans.PlanDB, PlanBuild", "ScanPieceTables"), HarmonyPostfix]
+            public static void ScanPieceTables() {
+                Patches.IndexItems();
+            }
+        }
+
+        public class ObjectDBPatch {
+            [HarmonyPatch(typeof(DungeonDB), nameof(DungeonDB.Start)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
+            public static void ObjectDBAwake() {
+                Patches.IndexItems();
+            }
         }
     }
 }

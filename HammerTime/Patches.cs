@@ -14,8 +14,7 @@ namespace HammerTime {
         public static Dictionary<int, string> categoryIdToName;
         private static Dictionary<string, List<PieceItem>> pieces;
 
-        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
-        public static void ObjectDBAwake(ObjectDB __instance) {
+        public static void IndexItems() {
             if (SceneManager.GetActiveScene().name != "main") {
                 return;
             }
