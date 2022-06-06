@@ -18,14 +18,14 @@ namespace HammerTime {
         public class PlanBuildPatch {
             [HarmonyPatch("PlanBuild.Plans.PlanDB, PlanBuild", "ScanPieceTables"), HarmonyPostfix]
             public static void ScanPieceTables() {
-                Plugin.IndexItems();
+                Plugin.IndexPrefabs();
             }
         }
 
         public class ObjectDBPatch {
             [HarmonyPatch(typeof(DungeonDB), nameof(DungeonDB.Start)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
             public static void ObjectDBAwake() {
-                Plugin.IndexItems();
+                Plugin.IndexPrefabs();
             }
         }
     }

@@ -43,11 +43,12 @@ namespace HammerTime {
             }
         }
 
-        public static void IndexItems() {
+        public static void IndexPrefabs() {
             if (SceneManager.GetActiveScene().name != "main") {
                 return;
             }
 
+            Helper.nameCache = ZNetScene.instance.m_namedPrefabs.ToDictionary(x => x.Value, x => x.Key);
             pieceTables = Helper.GetPieceTables();
             categoryIdToName = Helper.GetCategories();
             pieces = new Dictionary<string, List<PieceItem>>();
@@ -129,15 +130,20 @@ namespace HammerTime {
         }
 
         private static void MovePieceItemToTable(PieceItem pieceItem, string pieceTableFrom, string pieceTableTo, string category) {
-            bool hasPiece = pieceTables[pieceTableTo].m_pieces.Any(i => i.name == pieceItem.gameObject.name);
+            PieceTable table = pieceTables[pieceTableTo];
+            GameObject gameObject = pieceItem.gameObject;
+            int nameHash = Helper.GetPieceNameHash(gameObject);
+
             pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+            bool hasPiece = table.m_pieces.Contains(gameObject) ||
+                            pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => Helper.GetPieceNameHash(i) == nameHash);
 
             if (!hasPiece) {
-                pieceTables[pieceTableTo].m_pieces.Add(pieceItem.gameObject);
+                pieceTables[pieceTableTo].m_pieces.Add(gameObject);
             }
 
-            if (pieceTables[pieceTableFrom].m_pieces.Contains(pieceItem.gameObject)) {
-                pieceTables[pieceTableFrom].m_pieces.Remove(pieceItem.gameObject);
+            if (pieceTables[pieceTableFrom].m_pieces.Contains(gameObject)) {
+                pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
             }
         }
     }
