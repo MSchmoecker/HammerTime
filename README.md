@@ -11,7 +11,7 @@ That means the original hammers will be empty.
 
 ### Config
 All config options are generated automatically after the first world loading for every custom hammer individually.
-They can be changed at runtime but old tabs are not cleaned up until restart.
+They can be changed at runtime.
 
 Following Options are available:
 - Combine Mod Categories: Combines all categories from this custom hammer into one category
@@ -54,6 +54,12 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 
 
 ## Changelog
+0.1.3:
+- Added Auga Hud compatibility
+- Tabs are cleaned up on config change and don't need a reload anymore
+- Fixed plan pieces in PlanBuild were not available
+- Improved performance of moving pieces to the hammers
+
 0.1.2:
 - Fixed a rare bug that caused an index error. This resulted in the player not being able to spawn
 - Fixed tab names were doubled when relogging within the same game session
