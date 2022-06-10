@@ -54,6 +54,9 @@ If you use r2modman/Tunderstore Mod Manager you can set the path too, but this i
 
 
 ## Changelog
+0.1.4:
+- Fixed conflict with ChickenBoo
+
 0.1.3:
 - Added Auga Hud compatibility
 - Tabs are cleaned up on config change and don't need a reload anymore
