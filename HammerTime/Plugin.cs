@@ -48,7 +48,6 @@ namespace HammerTime {
                 return;
             }
 
-            Helper.nameCache = ZNetScene.instance.m_namedPrefabs.ToDictionary(x => x.Value, x => x.Key);
             pieceTables = Helper.GetPieceTables();
             categoryIdToName = Helper.GetCategories();
             pieces = new Dictionary<string, List<PieceItem>>();
@@ -132,14 +131,14 @@ namespace HammerTime {
         private static void MovePieceItemToTable(PieceItem pieceItem, string pieceTableFrom, string pieceTableTo, string category) {
             PieceTable table = pieceTables[pieceTableTo];
             GameObject gameObject = pieceItem.gameObject;
-            int nameHash = Helper.GetPieceNameHash(gameObject);
+            int nameHash = pieceItem.nameHash;
 
             pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
             bool hasPiece = table.m_pieces.Contains(gameObject) ||
-                            pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => Helper.GetPieceNameHash(i) == nameHash);
+                            pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => i.name.GetStableHashCode() == nameHash);
 
             if (!hasPiece) {
-                pieceTables[pieceTableTo].m_pieces.Add(gameObject);
+                table.m_pieces.Add(gameObject);
             }
 
             if (pieceTables[pieceTableFrom].m_pieces.Contains(gameObject)) {

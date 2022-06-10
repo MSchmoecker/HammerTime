@@ -5,8 +5,6 @@ using UnityEngine;
 
 namespace HammerTime {
     public class Helper {
-        public static Dictionary<GameObject, int> nameCache = new Dictionary<GameObject, int>();
-
         public static Dictionary<int, string> GetCategories() {
             List<string> customCategories = PieceManager.Instance.GetPieceCategories();
             Dictionary<int, string> categoryIdToName = customCategories.ToDictionary(i => 4 + customCategories.IndexOf(i), i => i);
@@ -48,10 +46,6 @@ namespace HammerTime {
             }
 
             return pieceItem.tabName;
-        }
-
-        public static int GetPieceNameHash(GameObject piece) {
-            return nameCache.TryGetValue(piece, out int nameHash) ? nameHash : piece.name.GetHashCode();
         }
     }
 }
