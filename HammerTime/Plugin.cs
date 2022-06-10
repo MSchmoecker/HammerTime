@@ -141,9 +141,7 @@ namespace HammerTime {
                 table.m_pieces.Add(gameObject);
             }
 
-            if (pieceTables[pieceTableFrom].m_pieces.Contains(gameObject)) {
-                pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
-            }
+            pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
         }
     }
 }
