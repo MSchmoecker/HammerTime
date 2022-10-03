@@ -22,20 +22,6 @@ namespace HammerTime {
             return PrefabManager.Cache.GetPrefabs(typeof(PieceTable)).ToDictionary(k => k.Key, v => (PieceTable)v.Value);
         }
 
-        public static string CleanTableName(string tableName) {
-            if (tableName == "_BJORKSNASPieceTable") {
-                return "VALKEA";
-            }
-
-            if (tableName == "OP_HammerTable") {
-                return "Bamboozled";
-            }
-
-            return tableName.Replace("PieceTable", "")
-                            .Replace("HammerTable", "")
-                            .Replace("_", "");
-        }
-
         public static string GetCategory(PieceItem pieceItem, bool combine) {
             if (pieceItem.piece.m_category == Piece.PieceCategory.All) {
                 return "All";

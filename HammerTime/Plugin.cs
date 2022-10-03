@@ -5,6 +5,7 @@ using BepInEx.Bootstrap;
 using HarmonyLib;
 using Jotunn.Entities;
 using Jotunn.Managers;
+using Jotunn.Utils;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -29,6 +30,8 @@ namespace HammerTime {
 
             harmony = new Harmony(ModGuid);
             harmony.PatchAll();
+
+            ModQuery.Enable();
         }
 
         private void Start() {
@@ -60,15 +63,15 @@ namespace HammerTime {
                 pieces.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
-                    CustomPiece customPiece = PieceManager.Instance.GetPiece(pieceGameObject.name);
+                    IModPrefab modPrefab = ModQuery.GetPrefab(pieceGameObject.name);
 
-                    if (customPiece != null) {
-                        string mod = customPiece.SourceMod.Name;
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, customPiece.Piece, mod, mod));
-                    } else {
-                        Piece piece = pieceGameObject.GetComponent<Piece>();
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Unrecognized Mod", Helper.CleanTableName(table.Key)));
+                    if (modPrefab == null || !modPrefab.Prefab) {
+                        continue;
                     }
+
+                    string mod = modPrefab.SourceMod.Name;
+                    Piece piece = modPrefab.Prefab.GetComponent<Piece>();
+                    pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, mod));
                 }
             }
 
