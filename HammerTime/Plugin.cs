@@ -24,6 +24,7 @@ namespace HammerTime {
         private static Dictionary<string, PieceTable> pieceTables;
         public static Dictionary<int, string> categoryIdToName;
         private static Dictionary<string, List<PieceItem>> pieces;
+        private static readonly List<ItemDrop> ToolItems = new List<ItemDrop>();
 
         private void Awake() {
             Instance = this;
@@ -32,6 +33,7 @@ namespace HammerTime {
             harmony.PatchAll();
 
             ModQuery.Enable();
+            HammerTime.Config.InitBaseConfig();
         }
 
         private void Start() {
@@ -78,6 +80,48 @@ namespace HammerTime {
             foreach (string pieceTable in pieces.Keys) {
                 UpdatePieceTable(pieceTable);
             }
+
+            IndexToolItems();
+            UpdateDisabledRecipes();
+        }
+
+        private static void IndexToolItems() {
+            foreach (GameObject item in ObjectDB.instance.m_items) {
+                if (!item || !item.TryGetComponent(out ItemDrop itemDrop)) {
+                    continue;
+                }
+
+                PieceTable pieceTable = itemDrop.m_itemData.m_shared.m_buildPieces;
+
+                if (!pieceTable) {
+                    continue;
+                }
+
+                Recipe recipe = ObjectDB.instance.GetRecipe(itemDrop.m_itemData);
+
+                if (recipe.m_enabled) {
+                    ToolItems.Add(itemDrop);
+                }
+            }
+        }
+
+        public static void UpdateDisabledRecipes() {
+            foreach (ItemDrop item in ToolItems) {
+                PieceTable pieceTable = item.m_itemData.m_shared.m_buildPieces;
+                string pieceTableName = pieceTables.FirstOrDefault(x => x.Value == pieceTable).Key;
+
+                if (pieceTableName == "_HammerPieceTable" || pieceTableName == "_HoePieceTable" || pieceTableName == "_CultivatorPieceTable") {
+                    continue;
+                }
+
+                if (string.IsNullOrEmpty(pieceTableName)) {
+                    continue;
+                }
+
+                bool moveHammerPieces = !HammerTime.Config.IsHammerDeactivated(pieceTableName);
+                Recipe recipe = ObjectDB.instance.GetRecipe(item.m_itemData);
+                recipe.m_enabled = !HammerTime.Config.disableRecipes.Value || !moveHammerPieces;
+            }
         }
 
         public static void Undo() {
@@ -104,7 +148,10 @@ namespace HammerTime {
             }
 
             bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
-            bool disabled = HammerTime.Config.IsHammerDeactivated(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
+            bool disabled = HammerTime.Config.IsHammerDeactivated(pieceTable, pieceMap[0].modName, () => {
+                UpdatePieceTable(pieceTable);
+                UpdateDisabledRecipes();
+            });
 
             foreach (PieceItem pieceItem in pieceMap) {
                 string category;
