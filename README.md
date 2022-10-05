@@ -40,23 +40,23 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
-0.2.0:
+0.2.0
 - Added option to disable crafting recipes of hammer that are active in this mod. Enabled by default
 - Mod names for every mod are now are shown in the settings
 - Changed config options to be more clear.
   The old config values will not apply and new config options will be generated.
   It is advised to delete the old config to reduce clutter
 
-0.1.4:
+0.1.4
 - Fixed conflict with ChickenBoo
 
-0.1.3:
+0.1.3
 - Added Auga Hud compatibility
 - Tabs are cleaned up on config change and don't need a reload anymore
 - Fixed plan pieces in PlanBuild were not available
 - Improved performance of moving pieces to the hammers
 
-0.1.2:
+0.1.2
 - Fixed a rare bug that caused an index error. This resulted in the player not being able to spawn
 - Fixed tab names were doubled when relogging within the same game session
 - Config options can now be changed at runtime, although old tabs are not cleaned up until restart
