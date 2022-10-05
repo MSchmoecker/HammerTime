@@ -118,9 +118,16 @@ namespace HammerTime {
                     continue;
                 }
 
-                bool moveHammerPieces = !HammerTime.Config.IsHammerDeactivated(pieceTableName);
+                bool isHammerEnabled = HammerTime.Config.IsHammerEnabled(pieceTableName);
+                bool disableRecipe = HammerTime.Config.disableRecipes.Value && isHammerEnabled;
+
                 Recipe recipe = ObjectDB.instance.GetRecipe(item.m_itemData);
-                recipe.m_enabled = !HammerTime.Config.disableRecipes.Value || !moveHammerPieces;
+                recipe.m_enabled = !disableRecipe;
+            }
+
+            if (Player.m_localPlayer && InventoryGui.instance) {
+                Player.m_localPlayer.UpdateKnownRecipesList();
+                InventoryGui.instance.UpdateCraftingPanel();
             }
         }
 
@@ -148,7 +155,7 @@ namespace HammerTime {
             }
 
             bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
-            bool disabled = HammerTime.Config.IsHammerDeactivated(pieceTable, pieceMap[0].modName, () => {
+            bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceMap[0].modName, () => {
                 UpdatePieceTable(pieceTable);
                 UpdateDisabledRecipes();
             });
@@ -158,7 +165,7 @@ namespace HammerTime {
                 string categoryUnCombined = Helper.GetCategory(pieceItem, false);
                 string categoryCombined = Helper.GetCategory(pieceItem, true);
 
-                if (disabled) {
+                if (!enabled) {
                     PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
                     PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
 
