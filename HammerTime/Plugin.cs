@@ -87,7 +87,7 @@ namespace HammerTime {
 
         private static void IndexToolItems() {
             foreach (GameObject item in ObjectDB.instance.m_items) {
-                if (!item || !item.TryGetComponent(out ItemDrop itemDrop)) {
+                if (!item || !item.TryGetComponent(out ItemDrop itemDrop) || itemDrop.m_itemData?.m_shared == null) {
                     continue;
                 }
 
@@ -99,7 +99,7 @@ namespace HammerTime {
 
                 Recipe recipe = ObjectDB.instance.GetRecipe(itemDrop.m_itemData);
 
-                if (recipe.m_enabled) {
+                if (recipe && recipe.m_enabled) {
                     ToolItems.Add(itemDrop);
                 }
             }
