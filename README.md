@@ -40,6 +40,9 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.2.1
+- Fixed an error that could occur with some modded items, which caused the recipe disabling to not work properly
+
 0.2.0
 - Added option to disable crafting recipes of hammer that are active in this mod. Enabled by default
 - Mod names for every mod are now are shown in the settings
