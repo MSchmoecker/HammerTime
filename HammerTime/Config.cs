@@ -8,9 +8,9 @@ namespace HammerTime {
     public static class Config {
         public static ConfigEntry<bool> disableRecipes;
 
-        private static readonly Dictionary<string, bool> CombineCategories = new Dictionary<string, bool>();
         private static readonly Dictionary<string, bool> EnabledHammers = new Dictionary<string, bool>();
-        private static readonly Dictionary<string, ConfigEntry<string>> CategoryNames = new Dictionary<string, ConfigEntry<string>>();
+        private static readonly Dictionary<string, bool> CombineCategories = new Dictionary<string, bool>();
+        private static readonly Dictionary<string, string> CategoryNames = new Dictionary<string, string>();
 
         private const string CategoryDescription = "A new category is getting created if it is not a vanilla value. " +
                                                    "If two categories have the same name the pieces will be combined, even from different hammers. " +
@@ -29,6 +29,7 @@ namespace HammerTime {
 
         public static bool CombineModCategories(string pieceTable, string modName, Action settingChanged) {
             if (!CombineCategories.ContainsKey(pieceTable)) {
+                string section = $"{modName} {pieceTable}";
                 string key = $"Combine {pieceTable}";
                 const string description = "Combines all categories from this custom hammer into one category. " +
                                            "Can be changed at runtime. ";
@@ -37,7 +38,7 @@ namespace HammerTime {
                     Order = 4
                 };
 
-                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind($"{modName} {pieceTable}", key, false, new ConfigDescription(description.Trim(), null, attributes));
+                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind(section, key, false, new ConfigDescription(description.Trim(), null, attributes));
                 CombineCategories.Add(pieceTable, combine.Value);
 
                 combine.SettingChanged += (sender, args) => {
@@ -53,6 +54,7 @@ namespace HammerTime {
             if (!EnabledHammers.ContainsKey(pieceTable)) {
                 bool defaultDisabled = modName == "PlanBuild" || pieceTable == "_RuneFocusPieceTable";
 
+                string section = $"{modName} {pieceTable}";
                 string key = $"Enable {pieceTable}";
                 const string description = "Enables moving pieces from this custom hammer into the vanilla hammer. " +
                                            "Can be changed at runtime. ";
@@ -61,7 +63,7 @@ namespace HammerTime {
                     Order = 5
                 };
 
-                ConfigEntry<bool> enabled = Plugin.Instance.Config.Bind($"{modName} {pieceTable}", key, !defaultDisabled, new ConfigDescription(description.Trim(), null, attributes));
+                ConfigEntry<bool> enabled = Plugin.Instance.Config.Bind(section, key, !defaultDisabled, new ConfigDescription(description.Trim(), null, attributes));
                 EnabledHammers.Add(pieceTable, enabled.Value);
 
                 enabled.SettingChanged += (sender, args) => {
@@ -90,15 +92,16 @@ namespace HammerTime {
             string cacheKey = $"Single_{pieceTable}_{originalCategory}";
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
+                string section = $"{modName} {pieceTable}";
                 string key = $"Category Name {Plugin.categoryIdToName[(int)originalCategory]}";
                 string category = $"{modName} {Plugin.categoryIdToName[(int)originalCategory]}";
-                string description = $"Used category name if categories are not combined. {CategoryDescription}";
+                string description = $"Used category name if categories are not combined. {CategoryDescription}".Trim();
 
-                ConfigEntry<string> entry = Plugin.Instance.Config.Bind($"{modName} {pieceTable}".Trim(), key, category, description);
+                ConfigEntry<string> entry = Plugin.Instance.Config.Bind(section, key, category, description);
                 InitCategoryName(cacheKey, entry, settingChanged);
             }
 
-            return CategoryNames[cacheKey].Value;
+            return CategoryNames[cacheKey];
         }
 
         public static string GetCombinedCategoryName(string pieceTable, string modName, Action settingChanged) {
@@ -116,20 +119,19 @@ namespace HammerTime {
                 InitCategoryName(cacheKey, entry, settingChanged);
             }
 
-            return CategoryNames[cacheKey].Value;
+            return CategoryNames[cacheKey];
         }
 
         private static void InitCategoryName(string key, ConfigEntry<string> entry, Action settingChanged) {
             entry.SettingChanged += (sender, args) => {
-                string oldValue = CategoryNames[key].Value;
-                string newValue = entry.Value;
-                CategoryNames[key].Value = newValue;
+                string oldValue = CategoryNames[key];
+                CategoryNames[key] = entry.Value;
 
                 PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", oldValue);
                 settingChanged?.Invoke();
             };
 
-            CategoryNames[key] = entry;
+            CategoryNames[key] = entry.Value;
         }
     }
 }

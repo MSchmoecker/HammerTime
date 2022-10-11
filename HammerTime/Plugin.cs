@@ -154,11 +154,11 @@ namespace HammerTime {
                 return;
             }
 
-            bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
             bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceMap[0].modName, () => {
                 UpdatePieceTable(pieceTable);
                 UpdateDisabledRecipes();
             });
+            bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
 
             string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
 
