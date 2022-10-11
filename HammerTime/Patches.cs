@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
-using Jotunn.Entities;
-using Jotunn.Managers;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace HammerTime {
     [HarmonyPatch]
