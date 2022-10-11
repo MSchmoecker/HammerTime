@@ -144,6 +144,9 @@ namespace HammerTime {
         }
 
         private static void UpdatePieceTable(string pieceTable) {
+            HashSet<string> potentialCategories = new HashSet<string>();
+            HashSet<string> usedCategories = new HashSet<string>();
+
             foreach (PieceItem pieceItem in pieces[pieceTable]) {
                 bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
                     UpdatePieceTable(pieceTable);
@@ -155,24 +158,24 @@ namespace HammerTime {
                 string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
                 string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, pieceItem.originalCategory, () => UpdatePieceTable(pieceTable));
 
-                if (!enabled) {
-                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
-                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
+                potentialCategories.Add(categoryCombined);
+                potentialCategories.Add(categoryUnCombined);
 
+                if (!enabled) {
                     category = categoryIdToName[(int)pieceItem.originalCategory];
                     MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
                     continue;
                 }
 
-                if (combine) {
-                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
-                    category = categoryCombined;
-                } else {
-                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
-                    category = categoryUnCombined;
-                }
-
+                category = combine ? categoryCombined : categoryUnCombined;
+                usedCategories.Add(category);
                 MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
+            }
+
+            foreach (string category in potentialCategories) {
+                if (!usedCategories.Contains(category)) {
+                    PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", category);
+                }
             }
         }
 

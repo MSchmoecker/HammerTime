@@ -32,7 +32,7 @@ namespace HammerTime {
 
             if (!CombineCategories.ContainsKey(cacheKey)) {
                 string section = $"{modName} {pieceTable}";
-                string key = $"Combine {modName} {pieceTable}";
+                string key = $"Combine {pieceTable}";
                 const string description = "Combines all categories from this custom hammer into one category. " +
                                            "Can be changed at runtime. ";
 
@@ -59,7 +59,7 @@ namespace HammerTime {
                 bool defaultDisabled = modName == "PlanBuild" || pieceTable == "_RuneFocusPieceTable" || Helper.IsVanillaPieceTable(pieceTable);
 
                 string section = $"{modName} {pieceTable}";
-                string key = $"Enable {modName} {pieceTable}";
+                string key = $"Enable {pieceTable}";
                 const string description = "Enables moving pieces from this custom hammer into the vanilla hammer. " +
                                            "Can be changed at runtime. ";
 
