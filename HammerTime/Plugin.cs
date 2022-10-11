@@ -160,10 +160,11 @@ namespace HammerTime {
                 UpdateDisabledRecipes();
             });
 
+            string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
+
             foreach (PieceItem pieceItem in pieceMap) {
                 string category;
-                string categoryUnCombined = Helper.GetCategory(pieceItem, false);
-                string categoryCombined = Helper.GetCategory(pieceItem, true);
+                string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, pieceItem.originalCategory, () => UpdatePieceTable(pieceTable));
 
                 if (!enabled) {
                     PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
@@ -176,11 +177,12 @@ namespace HammerTime {
 
                 if (combine) {
                     PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryUnCombined);
+                    category = categoryCombined;
                 } else {
                     PieceManager.Instance.RemovePieceCategory("_HammerPieceTable", categoryCombined);
+                    category = categoryUnCombined;
                 }
 
-                category = Helper.GetCategory(pieceItem, combine);
                 MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
             }
         }

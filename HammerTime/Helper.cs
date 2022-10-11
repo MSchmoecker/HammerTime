@@ -21,17 +21,5 @@ namespace HammerTime {
         public static Dictionary<string, PieceTable> GetPieceTables() {
             return PrefabManager.Cache.GetPrefabs(typeof(PieceTable)).ToDictionary(k => k.Key, v => (PieceTable)v.Value);
         }
-
-        public static string GetCategory(PieceItem pieceItem, bool combine) {
-            if (pieceItem.piece.m_category == Piece.PieceCategory.All) {
-                return "All";
-            }
-
-            if (!combine && Plugin.categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
-                return $"{pieceItem.tabName} {Plugin.categoryIdToName[(int)pieceItem.originalCategory]}";
-            }
-
-            return pieceItem.tabName;
-        }
     }
 }

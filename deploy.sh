@@ -1,5 +1,4 @@
 ModName="HammerTime"
-ModNameUnity="UnityHammerTime"
 
 # function for xml reading
 read_dom () {
