@@ -6,16 +6,14 @@ namespace HammerTime {
         public Piece piece;
         public int nameHash;
         public string modName;
-        public string tabName;
         public Piece.PieceCategory originalCategory;
 
-        public PieceItem(GameObject gameObject, Piece piece, string modName, string tabName) {
+        public PieceItem(GameObject gameObject, Piece piece, string modName) {
             this.gameObject = gameObject;
             this.piece = piece;
             nameHash = gameObject.name.GetStableHashCode();
             originalCategory = piece.m_category;
             this.modName = modName;
-            this.tabName = tabName;
         }
     }
 }

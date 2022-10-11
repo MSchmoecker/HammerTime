@@ -28,9 +28,11 @@ namespace HammerTime {
         }
 
         public static bool CombineModCategories(string pieceTable, string modName, Action settingChanged) {
-            if (!CombineCategories.ContainsKey(pieceTable)) {
+            string cacheKey = $"{pieceTable}_{modName}";
+
+            if (!CombineCategories.ContainsKey(cacheKey)) {
                 string section = $"{modName} {pieceTable}";
-                string key = $"Combine {pieceTable}";
+                string key = $"Combine {modName} {pieceTable}";
                 const string description = "Combines all categories from this custom hammer into one category. " +
                                            "Can be changed at runtime. ";
 
@@ -39,23 +41,25 @@ namespace HammerTime {
                 };
 
                 ConfigEntry<bool> combine = Plugin.Instance.Config.Bind(section, key, false, new ConfigDescription(description.Trim(), null, attributes));
-                CombineCategories.Add(pieceTable, combine.Value);
+                CombineCategories.Add(cacheKey, combine.Value);
 
                 combine.SettingChanged += (sender, args) => {
-                    CombineCategories[pieceTable] = combine.Value;
+                    CombineCategories[cacheKey] = combine.Value;
                     settingChanged?.Invoke();
                 };
             }
 
-            return CombineCategories[pieceTable];
+            return CombineCategories[cacheKey];
         }
 
         public static bool IsHammerEnabled(string pieceTable, string modName, Action settingChanged) {
-            if (!EnabledHammers.ContainsKey(pieceTable)) {
-                bool defaultDisabled = modName == "PlanBuild" || pieceTable == "_RuneFocusPieceTable";
+            string cacheKey = $"{pieceTable}_{modName}";
+
+            if (!EnabledHammers.ContainsKey(cacheKey)) {
+                bool defaultDisabled = modName == "PlanBuild" || pieceTable == "_RuneFocusPieceTable" || Helper.IsVanillaPieceTable(pieceTable);
 
                 string section = $"{modName} {pieceTable}";
-                string key = $"Enable {pieceTable}";
+                string key = $"Enable {modName} {pieceTable}";
                 const string description = "Enables moving pieces from this custom hammer into the vanilla hammer. " +
                                            "Can be changed at runtime. ";
 
@@ -64,20 +68,26 @@ namespace HammerTime {
                 };
 
                 ConfigEntry<bool> enabled = Plugin.Instance.Config.Bind(section, key, !defaultDisabled, new ConfigDescription(description.Trim(), null, attributes));
-                EnabledHammers.Add(pieceTable, enabled.Value);
+                EnabledHammers.Add(cacheKey, enabled.Value);
 
                 enabled.SettingChanged += (sender, args) => {
-                    EnabledHammers[pieceTable] = enabled.Value;
+                    EnabledHammers[cacheKey] = enabled.Value;
                     settingChanged?.Invoke();
                 };
             }
 
-            return EnabledHammers[pieceTable];
+            return EnabledHammers[cacheKey];
         }
 
         public static bool IsHammerEnabled(string pieceTable) {
-            if (EnabledHammers.TryGetValue(pieceTable, out bool enabled)) {
-                return enabled;
+            if (Helper.IsVanillaPieceTable(pieceTable)) {
+                return true;
+            }
+
+            foreach (KeyValuePair<string, bool> hammer in EnabledHammers) {
+                if (hammer.Key.StartsWith(pieceTable)) {
+                    return hammer.Value;
+                }
             }
 
             Logger.LogWarning($"Config 'Enable Hammer' for {pieceTable} not found");
@@ -89,7 +99,7 @@ namespace HammerTime {
                 return "All";
             }
 
-            string cacheKey = $"Single_{pieceTable}_{originalCategory}";
+            string cacheKey = $"Single_{pieceTable}_{modName}_{originalCategory}";
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
                 string section = $"{modName} {pieceTable}";
@@ -105,7 +115,7 @@ namespace HammerTime {
         }
 
         public static string GetCombinedCategoryName(string pieceTable, string modName, Action settingChanged) {
-            string cacheKey = $"Combined_{pieceTable}";
+            string cacheKey = $"Combined_{pieceTable}_{modName}";
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
                 string key = $"Combined Category Name";

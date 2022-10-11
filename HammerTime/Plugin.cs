@@ -58,10 +58,6 @@ namespace HammerTime {
             pieces = new Dictionary<string, List<PieceItem>>();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
-                if (table.Key == "_HammerPieceTable" || table.Key == "_HoePieceTable" || table.Key == "_CultivatorPieceTable") {
-                    continue;
-                }
-
                 pieces.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
@@ -73,7 +69,7 @@ namespace HammerTime {
 
                     string mod = modPrefab.SourceMod.Name;
                     Piece piece = modPrefab.Prefab.GetComponent<Piece>();
-                    pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, mod));
+                    pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod));
                 }
             }
 
@@ -110,7 +106,7 @@ namespace HammerTime {
                 PieceTable pieceTable = item.m_itemData.m_shared.m_buildPieces;
                 string pieceTableName = pieceTables.FirstOrDefault(x => x.Value == pieceTable).Key;
 
-                if (pieceTableName == "_HammerPieceTable" || pieceTableName == "_HoePieceTable" || pieceTableName == "_CultivatorPieceTable") {
+                if (Helper.IsVanillaPieceTable(pieceTableName)) {
                     continue;
                 }
 
@@ -148,22 +144,15 @@ namespace HammerTime {
         }
 
         private static void UpdatePieceTable(string pieceTable) {
-            List<PieceItem> pieceMap = pieces[pieceTable];
+            foreach (PieceItem pieceItem in pieces[pieceTable]) {
+                bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
+                    UpdatePieceTable(pieceTable);
+                    UpdateDisabledRecipes();
+                });
+                bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
 
-            if (pieceMap.Count == 0) {
-                return;
-            }
-
-            bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceMap[0].modName, () => {
-                UpdatePieceTable(pieceTable);
-                UpdateDisabledRecipes();
-            });
-            bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
-
-            string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceMap[0].modName, () => UpdatePieceTable(pieceTable));
-
-            foreach (PieceItem pieceItem in pieceMap) {
                 string category;
+                string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
                 string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, pieceItem.originalCategory, () => UpdatePieceTable(pieceTable));
 
                 if (!enabled) {
@@ -200,7 +189,9 @@ namespace HammerTime {
                 table.m_pieces.Add(gameObject);
             }
 
-            pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
+            if (pieceTableFrom != pieceTableTo) {
+                pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
+            }
         }
     }
 }
