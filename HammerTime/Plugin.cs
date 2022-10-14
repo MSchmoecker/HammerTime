@@ -159,6 +159,8 @@ namespace HammerTime {
             HashSet<string> potentialCategories = new HashSet<string>();
             HashSet<string> usedCategories = new HashSet<string>();
 
+            potentialCategories.Add(" ");
+
             for (int i = 0; i < (int)Piece.PieceCategory.Max; i++) {
                 potentialCategories.Add(Enum.GetName(typeof(Piece.PieceCategory), i));
             }
@@ -186,6 +188,11 @@ namespace HammerTime {
                 }
 
                 category = combine ? categoryCombined : categoryUnCombined;
+
+                if (string.IsNullOrEmpty(category)) {
+                    category = " ";
+                }
+
                 usedCategories.Add(category);
                 MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
             }
