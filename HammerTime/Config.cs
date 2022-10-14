@@ -107,6 +107,10 @@ namespace HammerTime {
                 string category = $"{modName} {Plugin.categoryIdToName[(int)originalCategory]}";
                 string description = $"Used category name if categories are not combined. {CategoryDescription}".Trim();
 
+                if (modName == "Vanilla") {
+                    category = Plugin.categoryIdToName[(int)originalCategory];
+                }
+
                 ConfigEntry<string> entry = Plugin.Instance.Config.Bind(section, key, category, description);
                 InitCategoryName(cacheKey, entry, settingChanged);
             }

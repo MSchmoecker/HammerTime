@@ -58,18 +58,23 @@ namespace HammerTime {
             pieces = new Dictionary<string, List<PieceItem>>();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
+                if (Helper.IsVanillaPieceTable(table.Key) && table.Key != "_HammerPieceTable") {
+                    continue;
+                }
+
                 pieces.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
                     IModPrefab modPrefab = ModQuery.GetPrefab(pieceGameObject.name);
 
                     if (modPrefab == null || !modPrefab.Prefab) {
-                        continue;
+                        Piece piece = pieceGameObject.GetComponent<Piece>();
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla"));
+                    } else {
+                        string mod = modPrefab.SourceMod.Name;
+                        Piece piece = modPrefab.Prefab.GetComponent<Piece>();
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod));
                     }
-
-                    string mod = modPrefab.SourceMod.Name;
-                    Piece piece = modPrefab.Prefab.GetComponent<Piece>();
-                    pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod));
                 }
             }
 
@@ -190,7 +195,10 @@ namespace HammerTime {
             GameObject gameObject = pieceItem.gameObject;
             int nameHash = pieceItem.nameHash;
 
-            pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+            if (pieceItem.originalCategory != Piece.PieceCategory.All) {
+                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+            }
+
             bool hasPiece = table.m_pieces.Contains(gameObject) ||
                             pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => i.name.GetStableHashCode() == nameHash);
 
