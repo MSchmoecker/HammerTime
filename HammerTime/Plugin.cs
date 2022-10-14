@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Bootstrap;
@@ -146,6 +147,10 @@ namespace HammerTime {
             HashSet<string> potentialCategories = new HashSet<string>();
             HashSet<string> usedCategories = new HashSet<string>();
 
+            for (int i = 0; i < (int)Piece.PieceCategory.Max; i++) {
+                potentialCategories.Add(Enum.GetName(typeof(Piece.PieceCategory), i));
+            }
+
             foreach (PieceItem pieceItem in pieces[pieceTable]) {
                 bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
                     UpdatePieceTable(pieceTable);
@@ -157,11 +162,13 @@ namespace HammerTime {
                 string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
                 string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, pieceItem.originalCategory, () => UpdatePieceTable(pieceTable));
 
+                potentialCategories.Add(categoryIdToName[(int)pieceItem.originalCategory]);
                 potentialCategories.Add(categoryCombined);
                 potentialCategories.Add(categoryUnCombined);
 
                 if (!enabled) {
                     category = categoryIdToName[(int)pieceItem.originalCategory];
+                    usedCategories.Add(category);
                     MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
                     continue;
                 }
