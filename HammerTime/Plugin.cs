@@ -41,6 +41,10 @@ namespace HammerTime {
                 harmony.PatchAll(typeof(AugaCompat));
             }
 
+            if (Chainloader.PluginInfos.ContainsKey("WackyMole.WackysDatabase")) {
+                harmony.PatchAll(typeof(Patches.WackyDBPatch));
+            }
+
             if (Chainloader.PluginInfos.ContainsKey("marcopogo.PlanBuild")) {
                 harmony.PatchAll(typeof(Patches.PlanBuildPatch));
             } else {
@@ -78,12 +82,15 @@ namespace HammerTime {
                 }
             }
 
+            UpdateAllPieceTables();
+            IndexToolItems();
+            UpdateDisabledRecipes();
+        }
+
+        public static void UpdateAllPieceTables() {
             foreach (string pieceTable in pieces.Keys) {
                 UpdatePieceTable(pieceTable);
             }
-
-            IndexToolItems();
-            UpdateDisabledRecipes();
         }
 
         private static void IndexToolItems() {
