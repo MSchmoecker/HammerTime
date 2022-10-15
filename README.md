@@ -1,5 +1,6 @@
 # HammerTime
 
+
 ## About
 Moves all pieces from custom hammers to the vanilla hammer.
 
@@ -9,7 +10,7 @@ It is not possible to have the same pieces into different hammers with different
 That means the original hammers will be empty.
 
 
-### Settings
+## Settings
 All config options can be changed at runtime with the BepInEx Configuration Manager or similar tools.
 
 General:
@@ -17,8 +18,18 @@ General:
   Only deactivates the recipes, existing items will not be removed. Enabled by default.
 
 Other config options are generated automatically after the first world loading for every custom hammer individually:
-- Enable Hammer: Enables moving pieces from this custom hammer into the vanilla hammer
-- Combine Hammer Categories: Combines all categories from this custom hammer into one category
+- Enable Hammer: Enables moving pieces from this hammer into the vanilla hammer
+- Combine Categories: Combines all categories from this custom hammer into one category
+- Combined Category Name: Custom category into which pieces are moved, if 'Combine Categories' is turned on
+- Category Name 'Original Category Name': Custom category into which pieces from this original category are moved, if 'Combine Categories' is turned off
+
+
+### Custom Categories
+As mentioned above, it is possible to set custom category names from different source categories.
+Using vanilla names (Misc, Crafting, Building, Furniture) places the pieces into these categories, while using a custom name creates a new category.
+Using the same name for multiple categories groups the pieces together.
+
+At the moment, it is not possible to disable vanilla categories.
 
 
 ## Manual Installation
@@ -40,6 +51,12 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.0
+- Reworked the config again to allow new features, the old config should be deleted and regenerated
+- Added configuration of custom category names to organize your hammer individually
+- Added configuration of mods that use the vanilla hammer
+- Improved compatibility with WackysDB, HammerTime now reloads after WackysDB to move pieces into the correct hammer/category
+
 0.2.1
 - Fixed an error that could occur with some modded items, which caused the recipe disabling to not work properly
 
