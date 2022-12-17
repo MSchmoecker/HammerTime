@@ -6,18 +6,16 @@ using UnityEngine;
 namespace HammerTime.Compatibility {
     public class Cookie {
         public static void IndexPrefabs(Dictionary<string, List<PieceItem>> pieces) {
-            Plugin.Log.LogInfo("Indexing Cookie prefabs");
             Transform hammerUI = Chainloader.ManagerObject.transform.Find("CookieHammerUI");
 
             if (!hammerUI) {
-                Plugin.Log.LogWarning("Cookie Hammer UI not found");
                 return;
             }
 
             Transform pieceParent = hammerUI.transform.Find("Canvas/MainTab/ItemList/ListPanel/Scroll View/Viewport/Content");
 
             if (!pieceParent) {
-                Plugin.Log.LogWarning($"Cookie Piece parent not found");
+                Plugin.Log.LogWarning("CookieMilk HammerUI found but no piece parent");
                 return;
             }
 
@@ -37,7 +35,7 @@ namespace HammerTime.Compatibility {
                     IModPrefab modPrefab = ModQuery.GetPrefab(prefabName);
 
                     if (modPrefab == null) {
-                        Plugin.Log.LogWarning($"Cookie Prefab {prefabName} not found");
+                        Plugin.Log.LogWarning($"CookieMilk Prefab {prefabName} not found");
                         continue;
                     }
 
