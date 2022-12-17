@@ -51,6 +51,10 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.1
+- Added support for [CookieMilk](https://valheim.thunderstore.io/package/CookieMilk/) pieces
+- Automatically enabled Combine Categories of a mod with less then 60 pieces, this only applies to newly generated configs
+
 0.3.0
 - Reworked the config again to allow new features, the old config should be deleted and regenerated
 - Added configuration of custom category names to organize your hammer individually
