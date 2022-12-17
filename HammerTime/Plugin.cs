@@ -171,13 +171,23 @@ namespace HammerTime {
                 potentialCategories.Add(Enum.GetName(typeof(Piece.PieceCategory), i));
             }
 
+            Dictionary<string, int> pieceCountByMod = new Dictionary<string, int>();
+            foreach (PieceItem pieceItem in pieces[pieceTable]) {
+                if (!pieceCountByMod.ContainsKey(pieceItem.modName)) {
+                    pieceCountByMod.Add(pieceItem.modName, 0);
+                }
+
+                pieceCountByMod[pieceItem.modName]++;
+            }
+
             foreach (PieceItem pieceItem in pieces[pieceTable]) {
                 bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
                     UpdatePieceTable(pieceTable);
                     UpdateDisabledRecipes();
                 });
 
-                bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
+                bool combineByDefault = pieceCountByMod[pieceItem.modName] <= 60;
+                bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, combineByDefault, () => UpdatePieceTable(pieceTable));
 
                 string originalCategory;
 

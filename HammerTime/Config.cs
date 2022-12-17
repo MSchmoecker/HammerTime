@@ -27,7 +27,7 @@ namespace HammerTime {
             disableRecipes.SettingChanged += (sender, args) => Plugin.UpdateDisabledRecipes();
         }
 
-        public static bool CombineModCategories(string pieceTable, string modName, Action settingChanged) {
+        public static bool CombineModCategories(string pieceTable, string modName, bool combineByDefault, Action settingChanged) {
             string cacheKey = $"{pieceTable}_{modName}";
 
             if (!CombineCategories.ContainsKey(cacheKey)) {
@@ -40,7 +40,7 @@ namespace HammerTime {
                     Order = 4
                 };
 
-                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind(section, key, false, new ConfigDescription(description.Trim(), null, attributes));
+                ConfigEntry<bool> combine = Plugin.Instance.Config.Bind(section, key, combineByDefault, new ConfigDescription(description.Trim(), null, attributes));
                 CombineCategories.Add(cacheKey, combine.Value);
 
                 combine.SettingChanged += (sender, args) => {
