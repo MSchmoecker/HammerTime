@@ -94,8 +94,8 @@ namespace HammerTime {
             return false;
         }
 
-        public static string GetCategoryName(string pieceTable, string modName, Piece.PieceCategory originalCategory, Action settingChanged) {
-            if (originalCategory == Piece.PieceCategory.All) {
+        public static string GetCategoryName(string pieceTable, string modName, string originalCategory, Action settingChanged) {
+            if (originalCategory == "All") {
                 return "All";
             }
 
@@ -103,12 +103,12 @@ namespace HammerTime {
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
                 string section = $"{modName} {pieceTable}";
-                string key = $"Category Name {Plugin.categoryIdToName[(int)originalCategory]}";
-                string category = $"{modName} {Plugin.categoryIdToName[(int)originalCategory]}";
+                string key = $"Category Name {originalCategory}";
+                string category = $"{modName} {originalCategory}";
                 string description = $"Used category name if categories are not combined. {CategoryDescription}".Trim();
 
                 if (modName == "Vanilla") {
-                    category = Plugin.categoryIdToName[(int)originalCategory];
+                    category = originalCategory;
                 }
 
                 ConfigEntry<string> entry = Plugin.Instance.Config.Bind(section, key, category, description);

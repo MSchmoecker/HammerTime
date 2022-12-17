@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Bootstrap;
+using BepInEx.Logging;
+using HammerTime.Compatibility;
 using HarmonyLib;
 using Jotunn.Managers;
 using Jotunn.Utils;
@@ -19,6 +21,7 @@ namespace HammerTime {
         public const string ModVersion = "0.3.0";
 
         public static Plugin Instance { get; private set; }
+        public static ManualLogSource Log { get; private set; }
         private Harmony harmony;
 
         private static Dictionary<string, PieceTable> pieceTables;
@@ -28,6 +31,7 @@ namespace HammerTime {
 
         private void Awake() {
             Instance = this;
+            Log = Logger;
 
             harmony = new Harmony(ModGuid);
             harmony.PatchAll();
@@ -73,14 +77,16 @@ namespace HammerTime {
 
                     if (modPrefab == null || !modPrefab.Prefab) {
                         Piece piece = pieceGameObject.GetComponent<Piece>();
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla"));
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla", string.Empty));
                     } else {
                         string mod = modPrefab.SourceMod.Name;
                         Piece piece = modPrefab.Prefab.GetComponent<Piece>();
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod));
+                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, string.Empty));
                     }
                 }
             }
+
+            Cookie.IndexPrefabs(pieces);
 
             UpdateAllPieceTables();
             IndexToolItems();
@@ -170,11 +176,20 @@ namespace HammerTime {
                     UpdatePieceTable(pieceTable);
                     UpdateDisabledRecipes();
                 });
+
                 bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
+
+                string originalCategory;
+
+                if (string.IsNullOrEmpty(pieceItem.overrideCategory)) {
+                    originalCategory = categoryIdToName[(int)pieceItem.originalCategory];
+                } else {
+                    originalCategory = pieceItem.overrideCategory;
+                }
 
                 string category;
                 string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
-                string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, pieceItem.originalCategory, () => UpdatePieceTable(pieceTable));
+                string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, originalCategory, () => UpdatePieceTable(pieceTable));
 
                 potentialCategories.Add(categoryIdToName[(int)pieceItem.originalCategory]);
                 potentialCategories.Add(categoryCombined);
@@ -205,23 +220,24 @@ namespace HammerTime {
         }
 
         private static void MovePieceItemToTable(PieceItem pieceItem, string pieceTableFrom, string pieceTableTo, string category) {
-            PieceTable table = pieceTables[pieceTableTo];
             GameObject gameObject = pieceItem.gameObject;
-            int nameHash = pieceItem.nameHash;
 
-            if (pieceItem.originalCategory != Piece.PieceCategory.All) {
-                pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+            if (pieceTableFrom != pieceTableTo && pieceTables.TryGetValue(pieceTableFrom, out PieceTable tableFrom)) {
+                tableFrom.m_pieces.Remove(gameObject);
             }
 
-            bool hasPiece = table.m_pieces.Contains(gameObject) ||
-                            pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => i.name.GetStableHashCode() == nameHash);
+            if (pieceTables.TryGetValue(pieceTableTo, out PieceTable table)) {
+                if (pieceItem.originalCategory != Piece.PieceCategory.All) {
+                    pieceItem.piece.m_category = PieceManager.Instance.AddPieceCategory(pieceTableTo, category);
+                }
 
-            if (!hasPiece) {
-                table.m_pieces.Add(gameObject);
-            }
+                int nameHash = pieceItem.nameHash;
+                bool hasPiece = table.m_pieces.Contains(gameObject) ||
+                                pieceItem.originalCategory == Piece.PieceCategory.All && table.m_pieces.Any(i => i.name.GetStableHashCode() == nameHash);
 
-            if (pieceTableFrom != pieceTableTo) {
-                pieceTables[pieceTableFrom].m_pieces.Remove(gameObject);
+                if (!hasPiece) {
+                    table.m_pieces.Add(gameObject);
+                }
             }
         }
     }
