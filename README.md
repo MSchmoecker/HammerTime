@@ -51,6 +51,10 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.2
+- Fixed that a category could be disabled if two hammers use the same category name and one of them is disabled
+- Improved startup time with many mods
+
 0.3.1
 - Added support for [CookieMilk](https://valheim.thunderstore.io/package/CookieMilk/) pieces
 - Automatically enabled Combine Categories of a mod with less then 60 pieces, this only applies to newly generated configs
