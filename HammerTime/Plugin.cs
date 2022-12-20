@@ -207,7 +207,7 @@ namespace HammerTime {
                     potentialCategories.Add(categoryUnCombined);
 
                     if (!enabled) {
-                        category = categoryIdToName[(int)pieceItem.originalCategory];
+                        category = originalCategory;
                         usedCategories.Add(category);
                         MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
                         continue;
