@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace HammerTime.Compatibility {
     public class Cookie {
-        public static void IndexPrefabs(Dictionary<string, List<PieceItem>> pieces) {
+        public static void IndexPrefabs(Dictionary<string, List<PieceItem>> piecesByTable) {
             Transform hammerUI = Chainloader.ManagerObject.transform.Find("CookieHammerUI");
 
             if (!hammerUI) {
@@ -41,9 +41,9 @@ namespace HammerTime.Compatibility {
 
                     string mod = modPrefab.SourceMod.Name;
 
-                    if (!pieces.TryGetValue(mod, out List<PieceItem> modPieces)) {
+                    if (!piecesByTable.TryGetValue(mod, out List<PieceItem> modPieces)) {
                         modPieces = new List<PieceItem>();
-                        pieces.Add(mod, modPieces);
+                        piecesByTable.Add(mod, modPieces);
                     }
 
                     Piece piece = modPrefab.Prefab.GetComponent<Piece>();

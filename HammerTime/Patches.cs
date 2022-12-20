@@ -25,7 +25,7 @@ namespace HammerTime {
         public static class WackyDBPatch {
             [HarmonyPatch("wackydatabase.WMRecipeCust, WackysDatabase", "LoadAllRecipeData"), HarmonyPostfix]
             public static void WackyDBLoadAllRecipeData() {
-                Plugin.UpdateAllPieceTables();
+                Plugin.UpdatePieceTables();
             }
         }
     }

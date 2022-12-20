@@ -26,7 +26,7 @@ namespace HammerTime {
 
         private static Dictionary<string, PieceTable> pieceTables;
         public static Dictionary<int, string> categoryIdToName;
-        private static Dictionary<string, List<PieceItem>> pieces;
+        private static Dictionary<string, List<PieceItem>> piecesByTable;
         private static readonly List<ItemDrop> ToolItems = new List<ItemDrop>();
 
         private void Awake() {
@@ -63,40 +63,34 @@ namespace HammerTime {
 
             pieceTables = Helper.GetPieceTables();
             categoryIdToName = Helper.GetCategories();
-            pieces = new Dictionary<string, List<PieceItem>>();
+            piecesByTable = new Dictionary<string, List<PieceItem>>();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
                 if (Helper.IsVanillaPieceTable(table.Key) && table.Key != "_HammerPieceTable") {
                     continue;
                 }
 
-                pieces.Add(table.Key, new List<PieceItem>());
+                piecesByTable.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
                     IModPrefab modPrefab = ModQuery.GetPrefab(pieceGameObject.name);
 
                     if (modPrefab == null || !modPrefab.Prefab) {
                         Piece piece = pieceGameObject.GetComponent<Piece>();
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla", string.Empty));
+                        piecesByTable[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla", string.Empty));
                     } else {
                         string mod = modPrefab.SourceMod.Name;
                         Piece piece = modPrefab.Prefab.GetComponent<Piece>();
-                        pieces[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, string.Empty));
+                        piecesByTable[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, string.Empty));
                     }
                 }
             }
 
-            Cookie.IndexPrefabs(pieces);
+            Cookie.IndexPrefabs(piecesByTable);
 
-            UpdateAllPieceTables();
+            UpdatePieceTables();
             IndexToolItems();
             UpdateDisabledRecipes();
-        }
-
-        public static void UpdateAllPieceTables() {
-            foreach (string pieceTable in pieces.Keys) {
-                UpdatePieceTable(pieceTable);
-            }
         }
 
         private static void IndexToolItems() {
@@ -146,7 +140,7 @@ namespace HammerTime {
         }
 
         public static void Undo() {
-            foreach (KeyValuePair<string, List<PieceItem>> pieces in pieces) {
+            foreach (KeyValuePair<string, List<PieceItem>> pieces in piecesByTable) {
                 foreach (PieceItem pieceItem in pieces.Value) {
                     string category;
 
@@ -161,7 +155,7 @@ namespace HammerTime {
             }
         }
 
-        private static void UpdatePieceTable(string pieceTable) {
+        public static void UpdatePieceTables() {
             HashSet<string> potentialCategories = new HashSet<string>();
             HashSet<string> usedCategories = new HashSet<string>();
 
@@ -172,54 +166,60 @@ namespace HammerTime {
             }
 
             Dictionary<string, int> pieceCountByMod = new Dictionary<string, int>();
-            foreach (PieceItem pieceItem in pieces[pieceTable]) {
-                if (!pieceCountByMod.ContainsKey(pieceItem.modName)) {
-                    pieceCountByMod.Add(pieceItem.modName, 0);
-                }
+            foreach (List<PieceItem> table in piecesByTable.Values) {
+                foreach (PieceItem pieceItem in table) {
+                    if (!pieceCountByMod.ContainsKey(pieceItem.modName)) {
+                        pieceCountByMod.Add(pieceItem.modName, 0);
+                    }
 
-                pieceCountByMod[pieceItem.modName]++;
+                    pieceCountByMod[pieceItem.modName]++;
+                }
             }
 
-            foreach (PieceItem pieceItem in pieces[pieceTable]) {
-                bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
-                    UpdatePieceTable(pieceTable);
-                    UpdateDisabledRecipes();
-                });
+            foreach (KeyValuePair<string, List<PieceItem>> t in piecesByTable) {
+                string pieceTable = t.Key;
 
-                bool combineByDefault = pieceCountByMod[pieceItem.modName] <= 60;
-                bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, combineByDefault, () => UpdatePieceTable(pieceTable));
+                foreach (PieceItem pieceItem in t.Value) {
+                    bool enabled = HammerTime.Config.IsHammerEnabled(pieceTable, pieceItem.modName, () => {
+                        UpdatePieceTables();
+                        UpdateDisabledRecipes();
+                    });
 
-                string originalCategory;
+                    bool combineByDefault = pieceCountByMod[pieceItem.modName] <= 60;
+                    bool combine = HammerTime.Config.CombineModCategories(pieceTable, pieceItem.modName, combineByDefault, UpdatePieceTables);
 
-                if (string.IsNullOrEmpty(pieceItem.overrideCategory)) {
-                    originalCategory = categoryIdToName[(int)pieceItem.originalCategory];
-                } else {
-                    originalCategory = pieceItem.overrideCategory;
-                }
+                    string originalCategory;
 
-                string category;
-                string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, () => UpdatePieceTable(pieceTable));
-                string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, originalCategory, () => UpdatePieceTable(pieceTable));
+                    if (string.IsNullOrEmpty(pieceItem.overrideCategory)) {
+                        originalCategory = categoryIdToName[(int)pieceItem.originalCategory];
+                    } else {
+                        originalCategory = pieceItem.overrideCategory;
+                    }
 
-                potentialCategories.Add(categoryIdToName[(int)pieceItem.originalCategory]);
-                potentialCategories.Add(categoryCombined);
-                potentialCategories.Add(categoryUnCombined);
+                    string category;
+                    string categoryCombined = HammerTime.Config.GetCombinedCategoryName(pieceTable, pieceItem.modName, UpdatePieceTables);
+                    string categoryUnCombined = HammerTime.Config.GetCategoryName(pieceTable, pieceItem.modName, originalCategory, UpdatePieceTables);
 
-                if (!enabled) {
-                    category = categoryIdToName[(int)pieceItem.originalCategory];
+                    potentialCategories.Add(originalCategory);
+                    potentialCategories.Add(categoryCombined);
+                    potentialCategories.Add(categoryUnCombined);
+
+                    if (!enabled) {
+                        category = categoryIdToName[(int)pieceItem.originalCategory];
+                        usedCategories.Add(category);
+                        MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
+                        continue;
+                    }
+
+                    category = combine ? categoryCombined : categoryUnCombined;
+
+                    if (string.IsNullOrEmpty(category)) {
+                        category = " ";
+                    }
+
                     usedCategories.Add(category);
-                    MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
-                    continue;
+                    MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
                 }
-
-                category = combine ? categoryCombined : categoryUnCombined;
-
-                if (string.IsNullOrEmpty(category)) {
-                    category = " ";
-                }
-
-                usedCategories.Add(category);
-                MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
             }
 
             foreach (string category in potentialCategories) {
