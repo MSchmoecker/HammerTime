@@ -176,6 +176,8 @@ namespace HammerTime {
                 }
             }
 
+            Instance.Config.SaveOnConfigSet = false;
+
             foreach (KeyValuePair<string, List<PieceItem>> t in piecesByTable) {
                 string pieceTable = t.Key;
 
@@ -221,6 +223,9 @@ namespace HammerTime {
                     MovePieceItemToTable(pieceItem, pieceTable, "_HammerPieceTable", category);
                 }
             }
+
+            Instance.Config.Save();
+            Instance.Config.SaveOnConfigSet = true;
 
             foreach (string category in potentialCategories) {
                 if (!usedCategories.Contains(category)) {
