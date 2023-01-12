@@ -213,7 +213,11 @@ namespace HammerTime {
 
                     if (!enabled) {
                         category = originalCategory;
-                        usedCategories.Add(category);
+
+                        if (pieceTable == "_HammerPieceTable") {
+                            usedCategories.Add(category);
+                        }
+
                         MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieceTable, category);
                         continue;
                     }
