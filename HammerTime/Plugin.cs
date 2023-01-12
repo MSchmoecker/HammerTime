@@ -73,6 +73,11 @@ namespace HammerTime {
                 piecesByTable.Add(table.Key, new List<PieceItem>());
 
                 foreach (GameObject pieceGameObject in table.Value.m_pieces) {
+                    if (!pieceGameObject) {
+                        Log.LogWarning($"PieceTable '{table.Key}' pieces contains a null entry");
+                        continue;
+                    }
+
                     IModPrefab modPrefab = ModQuery.GetPrefab(pieceGameObject.name);
 
                     if (modPrefab == null || !modPrefab.Prefab) {
