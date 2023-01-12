@@ -51,6 +51,10 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.3
+- Fixed unused categories were not disabled if a disabled hammer uses the same category name
+- Fixed an error that occured if a piece table has a null entry
+
 0.3.2
 - Fixed that a category could be disabled if two hammers use the same category name and one of them is disabled
 - Improved startup time with many mods
