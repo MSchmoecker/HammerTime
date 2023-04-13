@@ -51,6 +51,9 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.4
+- Fixed an incompatibility with Auga, requires Auga 1.2.8 and Jotunn 2.11.4 or newer
+
 0.3.3
 - Fixed unused categories were not disabled if a disabled hammer uses the same category name
 - Fixed an error that occured if a piece table has a null entry
