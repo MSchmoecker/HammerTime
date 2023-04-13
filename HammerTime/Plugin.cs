@@ -41,10 +41,6 @@ namespace HammerTime {
         }
 
         private void Start() {
-            if (Chainloader.PluginInfos.ContainsKey("randyknapp.mods.auga")) {
-                harmony.PatchAll(typeof(AugaCompat));
-            }
-
             if (Chainloader.PluginInfos.ContainsKey("WackyMole.WackysDatabase")) {
                 harmony.PatchAll(typeof(Patches.WackyDBPatch));
             }

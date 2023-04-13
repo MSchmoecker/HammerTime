@@ -94,7 +94,6 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="AugaCompat.cs" />
         <Compile Include="Compatibility\Cookie.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="Helper.cs" />
