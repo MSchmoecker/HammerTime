@@ -115,8 +115,9 @@
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">
     </Target>
-    <Target Name="AfterBuild">
-    </Target>
     -->
-    <Import Project="../Environment.props" />
+  <Target Name="AfterBuild">
+    <Exec Command="$(SolutionDir)Libs/pdb2mdb.exe $(TargetPath)" />
+  </Target>
+  <Import Project="../Environment.props" />
 </Project>
