@@ -25,7 +25,6 @@ namespace HammerTime {
         private Harmony harmony;
 
         private static Dictionary<string, PieceTable> pieceTables;
-        public static Dictionary<int, string> categoryIdToName;
         private static Dictionary<string, List<PieceItem>> piecesByTable;
         private static readonly List<ItemDrop> ToolItems = new List<ItemDrop>();
 
@@ -58,7 +57,6 @@ namespace HammerTime {
             }
 
             pieceTables = Helper.GetPieceTables();
-            categoryIdToName = Helper.GetCategories();
             piecesByTable = new Dictionary<string, List<PieceItem>>();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
@@ -141,12 +139,14 @@ namespace HammerTime {
         }
 
         public static void Undo() {
+            Dictionary<Piece.PieceCategory, string> categoryIdToName = Helper.GetCategories();
+
             foreach (KeyValuePair<string, List<PieceItem>> pieces in piecesByTable) {
                 foreach (PieceItem pieceItem in pieces.Value) {
                     string category;
 
-                    if (categoryIdToName.ContainsKey((int)pieceItem.originalCategory)) {
-                        category = categoryIdToName[(int)pieceItem.originalCategory];
+                    if (categoryIdToName.ContainsKey(pieceItem.originalCategory)) {
+                        category = categoryIdToName[pieceItem.originalCategory];
                     } else {
                         category = pieceItem.originalCategory.ToString();
                     }
@@ -157,6 +157,8 @@ namespace HammerTime {
         }
 
         public static void UpdatePieceTables() {
+            Dictionary<Piece.PieceCategory, string> categoryIdToName = Helper.GetCategories();
+
             HashSet<string> potentialCategories = new HashSet<string>();
             HashSet<string> usedCategories = new HashSet<string>();
 
@@ -194,7 +196,7 @@ namespace HammerTime {
                     string originalCategory;
 
                     if (string.IsNullOrEmpty(pieceItem.overrideCategory)) {
-                        originalCategory = categoryIdToName[(int)pieceItem.originalCategory];
+                        originalCategory = categoryIdToName[pieceItem.originalCategory];
                     } else {
                         originalCategory = pieceItem.overrideCategory;
                     }
