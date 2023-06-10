@@ -103,7 +103,7 @@ namespace HammerTime {
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
                 string section = $"{modName} {pieceTable}";
-                string key = $"Category Name {originalCategory}";
+                string key = $"Category Name {originalCategory}".Trim();
                 string category = $"{modName} {originalCategory}";
                 string description = $"Used category name if categories are not combined. {CategoryDescription}".Trim();
 
