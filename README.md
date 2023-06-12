@@ -51,6 +51,11 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+0.3.5
+- Updated for Jotunn 2.12.0 because internal category ids are now different and caused errors
+- Added debug files (HammerTime.dll.mdb) to the release, this will make finding future issues easier
+- Fixed errors if a piece category has an empty name
+
 0.3.4
 - Fixed an incompatibility with Auga, requires Auga 1.2.8 and Jotunn 2.11.4 or newer
 
