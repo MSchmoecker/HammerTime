@@ -18,7 +18,7 @@ namespace HammerTime {
                                                    "Can be changed at runtime. ";
 
         // matches all '=', '\n', '\t', '\\', '"', '\'', '[', ']'
-        private static Regex invalidConfigCharsRegex = new Regex($"[=\n\t\\\\\"\'\\[\\]]*");
+        private static Regex invalidConfigChars = new Regex(@"[=\n\t\\""\'\[\]]*");
 
         public static void InitBaseConfig() {
             const string section = "1 - General";
@@ -154,7 +154,7 @@ namespace HammerTime {
         }
 
         private static string CleanKeySection(string section) {
-            return invalidConfigCharsRegex.Replace(section, "").Trim();
+            return invalidConfigChars.Replace(section, "").Trim();
         }
     }
 }
