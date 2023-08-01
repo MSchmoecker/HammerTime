@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using BepInEx.Configuration;
 using Jotunn;
 using Jotunn.Managers;
@@ -16,6 +17,9 @@ namespace HammerTime {
                                                    "If two categories have the same name the pieces will be combined, even from different hammers. " +
                                                    "Can be changed at runtime. ";
 
+        // matches all '=', '\n', '\t', '\\', '"', '\'', '[', ']'
+        private static Regex invalidConfigCharsRegex = new Regex($"[=\n\t\\\\\"\'\\[\\]]*");
+
         public static void InitBaseConfig() {
             const string section = "1 - General";
             const string key = "Disable Hammer Recipes";
@@ -31,7 +35,7 @@ namespace HammerTime {
             string cacheKey = $"{pieceTable}_{modName}";
 
             if (!CombineCategories.ContainsKey(cacheKey)) {
-                string section = $"{modName} {pieceTable}";
+                string section = CleanKeySection($"{modName} {pieceTable}");
                 const string key = "Combine Categories";
                 const string description = "Combines all categories from this custom hammer into one category. " +
                                            "Can be changed at runtime. ";
@@ -58,7 +62,7 @@ namespace HammerTime {
             if (!EnabledHammers.ContainsKey(cacheKey)) {
                 bool defaultDisabled = modName == "PlanBuild" || pieceTable == "_RuneFocusPieceTable" || Helper.IsVanillaPieceTable(pieceTable);
 
-                string section = $"{modName} {pieceTable}";
+                string section = CleanKeySection($"{modName} {pieceTable}");
                 const string key = "Enable Hammer";
                 const string description = "Enables moving pieces from this custom hammer into the vanilla hammer. " +
                                            "Can be changed at runtime. ";
@@ -102,8 +106,8 @@ namespace HammerTime {
             string cacheKey = $"Single_{pieceTable}_{modName}_{originalCategory}";
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
-                string section = $"{modName} {pieceTable}";
-                string key = $"Category Name {originalCategory}".Trim();
+                string section = CleanKeySection($"{modName} {pieceTable}");
+                string key = CleanKeySection($"Category Name {originalCategory}");
                 string category = $"{modName} {originalCategory}";
                 string description = $"Used category name if categories are not combined. {CategoryDescription}".Trim();
 
@@ -122,6 +126,7 @@ namespace HammerTime {
             string cacheKey = $"Combined_{pieceTable}_{modName}";
 
             if (!CategoryNames.ContainsKey(cacheKey)) {
+                string section = CleanKeySection($"{modName} {pieceTable}");
                 string key = $"Combined Category Name";
 
                 ConfigurationManagerAttributes attributes = new ConfigurationManagerAttributes {
@@ -129,7 +134,7 @@ namespace HammerTime {
                 };
                 ConfigDescription description = new ConfigDescription($"Used category name if categories are combined. {CategoryDescription}".Trim(), null, attributes);
 
-                ConfigEntry<string> entry = Plugin.Instance.Config.Bind($"{modName} {pieceTable}", key, $"{modName}", description);
+                ConfigEntry<string> entry = Plugin.Instance.Config.Bind(section, key, $"{modName}", description);
                 InitCategoryName(cacheKey, entry, settingChanged);
             }
 
@@ -146,6 +151,10 @@ namespace HammerTime {
             };
 
             CategoryNames[key] = entry.Value;
+        }
+
+        private static string CleanKeySection(string section) {
+            return invalidConfigCharsRegex.Replace(section, "").Trim();
         }
     }
 }
