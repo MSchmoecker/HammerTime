@@ -18,7 +18,7 @@ namespace HammerTime {
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "HammerTime";
         public const string ModGuid = "com.maxsch.valheim.HammerTime";
-        public const string ModVersion = "0.3.5";
+        public const string ModVersion = "0.3.6";
 
         public static Plugin Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }

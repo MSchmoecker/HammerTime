@@ -51,6 +51,10 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+
+0.3.6
+- Fixed an error if a mod uses special characters in a piece table name which aren't allowed in a BepInEx config section
+
 0.3.5
 - Updated for Jotunn 2.12.0 because internal category ids are now different and caused errors
 - Added debug files (HammerTime.dll.mdb) to the release, this will make finding future issues easier
