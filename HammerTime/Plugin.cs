@@ -4,7 +4,6 @@ using System.Linq;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Logging;
-using HammerTime.Compatibility;
 using HarmonyLib;
 using Jotunn.Managers;
 using Jotunn.Utils;
@@ -41,7 +40,8 @@ namespace HammerTime {
 
         private void Start() {
             if (Chainloader.PluginInfos.ContainsKey("WackyMole.WackysDatabase")) {
-                harmony.PatchAll(typeof(Patches.WackyDBPatch));
+                Compatibility.WackysDatabase.InitCompat();
+                return;
             }
 
             if (Chainloader.PluginInfos.ContainsKey("marcopogo.PlanBuild")) {
@@ -52,9 +52,11 @@ namespace HammerTime {
         }
 
         public static void IndexPrefabs() {
-            if (SceneManager.GetActiveScene().name != "main") {
+            if (SceneManager.GetActiveScene().name != "main" || piecesByTable?.Count > 0) {
                 return;
             }
+
+            Log.LogInfo("Indexing Pieces");
 
             pieceTables = Helper.GetPieceTables();
             piecesByTable = new Dictionary<string, List<PieceItem>>();
@@ -85,7 +87,7 @@ namespace HammerTime {
                 }
             }
 
-            Cookie.IndexPrefabs(piecesByTable);
+            Compatibility.Cookie.IndexPrefabs(piecesByTable);
 
             UpdatePieceTables();
             IndexToolItems();
@@ -157,6 +159,11 @@ namespace HammerTime {
         }
 
         public static void UpdatePieceTables() {
+            if (piecesByTable == null || piecesByTable.Count == 0) {
+                Log.LogWarning("Cannot run UpdatePieceTables, no pieces indexed yet");
+                return;
+            }
+
             Dictionary<Piece.PieceCategory, string> categoryIdToName = Helper.GetCategories();
 
             HashSet<string> potentialCategories = new HashSet<string>();

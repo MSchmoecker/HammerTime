@@ -95,6 +95,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="Compatibility\Cookie.cs" />
+        <Compile Include="Compatibility\WackysDatabase.cs" />
         <Compile Include="Config.cs" />
         <Compile Include="Helper.cs" />
         <Compile Include="Patches.cs" />
