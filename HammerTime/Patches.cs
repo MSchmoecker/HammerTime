@@ -8,13 +8,6 @@ namespace HammerTime {
             Plugin.Undo();
         }
 
-        public class PlanBuildPatch {
-            [HarmonyPatch("PlanBuild.Plans.PlanDB, PlanBuild", "ScanPieceTables"), HarmonyPostfix]
-            public static void ScanPieceTables() {
-                Plugin.IndexPrefabs();
-            }
-        }
-
         public class ObjectDBPatch {
             [HarmonyPatch(typeof(DungeonDB), nameof(DungeonDB.Start)), HarmonyPostfix, HarmonyPriority(Priority.Last)]
             public static void ObjectDBAwake() {

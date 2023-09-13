@@ -21,7 +21,7 @@ namespace HammerTime {
 
         public static Plugin Instance { get; private set; }
         public static ManualLogSource Log { get; private set; }
-        private Harmony harmony;
+        public Harmony harmony;
 
         private static Dictionary<string, PieceTable> pieceTables;
         private static Dictionary<string, List<PieceItem>> piecesByTable;
@@ -41,18 +41,17 @@ namespace HammerTime {
         private void Start() {
             if (Chainloader.PluginInfos.ContainsKey("WackyMole.WackysDatabase")) {
                 Compatibility.WackysDatabase.InitCompat();
-                return;
             }
 
             if (Chainloader.PluginInfos.ContainsKey("marcopogo.PlanBuild")) {
-                harmony.PatchAll(typeof(Patches.PlanBuildPatch));
+                Compatibility.PlanBuild.InitCompat();
             } else {
                 harmony.PatchAll(typeof(Patches.ObjectDBPatch));
             }
         }
 
         public static void IndexPrefabs() {
-            if (SceneManager.GetActiveScene().name != "main" || piecesByTable?.Count > 0) {
+            if (SceneManager.GetActiveScene().name != "main") {
                 return;
             }
 
