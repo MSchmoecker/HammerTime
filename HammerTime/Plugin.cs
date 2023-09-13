@@ -74,14 +74,19 @@ namespace HammerTime {
                     }
 
                     IModPrefab modPrefab = ModQuery.GetPrefab(pieceGameObject.name);
+                    Piece piece;
+                    string modName;
 
-                    if (modPrefab == null || !modPrefab.Prefab) {
-                        Piece piece = pieceGameObject.GetComponent<Piece>();
-                        piecesByTable[table.Key].Add(new PieceItem(pieceGameObject, piece, "Vanilla", string.Empty));
+                    if (modPrefab != null && modPrefab.Prefab) {
+                        piece = modPrefab.Prefab.GetComponent<Piece>();
+                        modName = modPrefab.SourceMod.Name;
                     } else {
-                        string mod = modPrefab.SourceMod.Name;
-                        Piece piece = modPrefab.Prefab.GetComponent<Piece>();
-                        piecesByTable[table.Key].Add(new PieceItem(pieceGameObject, piece, mod, string.Empty));
+                        piece = pieceGameObject.GetComponent<Piece>();
+                        modName = "Vanilla";
+                    }
+
+                    if (piece) {
+                        piecesByTable[table.Key].Add(new PieceItem(pieceGameObject, piece, modName, string.Empty));
                     }
                 }
             }
