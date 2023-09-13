@@ -51,7 +51,7 @@ namespace HammerTime {
         }
 
         public static void IndexPrefabs() {
-            if (SceneManager.GetActiveScene().name != "main") {
+            if (SceneManager.GetActiveScene().name != "main" || piecesByTable?.Count > 0) {
                 return;
             }
 
