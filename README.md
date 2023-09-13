@@ -29,7 +29,13 @@ As mentioned above, it is possible to set custom category names from different s
 Using vanilla names (Misc, Crafting, Building, Furniture) places the pieces into these categories, while using a custom name creates a new category.
 Using the same name for multiple categories groups the pieces together.
 
-At the moment, it is not possible to disable vanilla categories.
+If no piece uses a vanilla category, it will be disabled automatically.
+
+
+## Compatibility
+
+WackysDatabase ingame reloading is not supported, the game must be restarted if categories are changed.
+Also note that changing piece categories will create new config options (possibly in new segments) as they are grouped by mod and category name.
 
 
 ## Manual Installation
@@ -51,6 +57,10 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Changelog
+
+0.3.7
+- Fixed an compatibility error with Wacky's Database 2.0 update. Ingame reload is no longer supported
+- Fixed an error if a piece on a hammer has no piece script attached
 
 0.3.6
 - Fixed an error if a mod uses special characters in a piece table name which aren't allowed in a BepInEx config section
