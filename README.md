@@ -53,10 +53,13 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 - Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/HammerTime/
 - Nexus: https://www.nexusmods.com/valheim/mods/1864
 - Github: https://github.com/MSchmoecker/HammerTime
-- Discord: Margmas#9562. Feel free to DM or ping me in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
+- Discord: Margmas. Feel free to DM or ping me about feedback or questions, for example in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
 
 
 ## Changelog
+
+0.3.8
+- Fixed relogging without a restart caused tabs to not show up
 
 0.3.7
 - Fixed an compatibility error with Wacky's Database 2.0 update. Ingame reload is no longer supported
