@@ -24,7 +24,7 @@ namespace HammerTime {
         public Harmony harmony;
 
         private static Dictionary<string, PieceTable> pieceTables;
-        private static Dictionary<string, List<PieceItem>> piecesByTable;
+        private static Dictionary<string, List<PieceItem>> piecesByTable = new Dictionary<string, List<PieceItem>>();
         private static readonly List<ItemDrop> ToolItems = new List<ItemDrop>();
 
         private void Awake() {
@@ -51,14 +51,14 @@ namespace HammerTime {
         }
 
         public static void IndexPrefabs() {
-            if (SceneManager.GetActiveScene().name != "main" || piecesByTable?.Count > 0) {
+            if (SceneManager.GetActiveScene().name != "main") {
                 return;
             }
 
             Log.LogInfo("Indexing Pieces");
 
             pieceTables = Helper.GetPieceTables();
-            piecesByTable = new Dictionary<string, List<PieceItem>>();
+            piecesByTable.Clear();
 
             foreach (KeyValuePair<string, PieceTable> table in pieceTables) {
                 if (Helper.IsVanillaPieceTable(table.Key) && table.Key != "_HammerPieceTable") {
@@ -99,6 +99,8 @@ namespace HammerTime {
         }
 
         private static void IndexToolItems() {
+            ToolItems.Clear();
+
             foreach (GameObject item in ObjectDB.instance.m_items) {
                 if (!item || !item.TryGetComponent(out ItemDrop itemDrop) || itemDrop.m_itemData?.m_shared == null) {
                     continue;
@@ -151,8 +153,8 @@ namespace HammerTime {
                 foreach (PieceItem pieceItem in pieces.Value) {
                     string category;
 
-                    if (categoryIdToName.ContainsKey(pieceItem.originalCategory)) {
-                        category = categoryIdToName[pieceItem.originalCategory];
+                    if (categoryIdToName.TryGetValue(pieceItem.originalCategory, out string value)) {
+                        category = value;
                     } else {
                         category = pieceItem.originalCategory.ToString();
                     }
