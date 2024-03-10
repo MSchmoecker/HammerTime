@@ -13,7 +13,6 @@ using UnityEngine.SceneManagement;
 namespace HammerTime {
     [BepInPlugin(ModGuid, ModName, ModVersion)]
     [BepInDependency(Jotunn.Main.ModGuid, "2.12.0")]
-    [BepInProcess("valheim.exe")]
     public class Plugin : BaseUnityPlugin {
         public const string ModName = "HammerTime";
         public const string ModGuid = "com.maxsch.valheim.HammerTime";
