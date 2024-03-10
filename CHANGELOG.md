@@ -1,10 +1,13 @@
 ## Changelog
 
+0.3.9
+- Removed the process filter that prevented the mod from loading on linux devices
+
 0.3.8
 - Fixed relogging without a restart caused tabs to not show up
 
 0.3.7
-- Fixed an compatibility error with Wacky's Database 2.0 update. Ingame reload is no longer supported
+- Fixed an compatibility error with Wacky's Database 2.0 update. Ingame reload of Wacky's Database is no longer supported in HammerTime
 - Fixed an error if a piece on a hammer has no piece script attached
 
 0.3.6
