@@ -36,6 +36,7 @@ mkdir -p "$ModDir"
 cp "$ModName/bin/Debug/$ModName.dll" "$ModDir"
 cp "$ModName/bin/Debug/$ModName.dll.mdb" "$ModDir"
 cp README.md "$ModDir"
+cp CHANGELOG.md "$ModDir"
 cp manifest.json "$ModDir"
 cp icon.png "$ModDir"
 
@@ -48,7 +49,7 @@ cd "$ModDir" || exit
 mkdir -p plugins
 cp "$ModName.dll" "$ModName.dll.mdb" plugins
 
-zip "$ModName.zip" "$ModName.dll" "$ModName.dll.mdb" README.md manifest.json icon.png
+zip "$ModName.zip" "$ModName.dll" "$ModName.dll.mdb" README.md CHANGELOG.md manifest.json icon.png
 zip -r "$ModName-Nexus.zip" plugins
 
 rm -r plugins
