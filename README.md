@@ -9,6 +9,8 @@ Moves all pieces from custom hammers to the vanilla hammer.
 It is not possible to have the same pieces into different hammers with different categories.
 That means the original hammers will be empty.
 
+Vanilla tools (Hoe, Cultivator and Serving Tray) are excluded to not break the progression of the game.
+
 
 ## Settings
 All config options can be changed at runtime with the BepInEx Configuration Manager or similar tools.
@@ -50,9 +52,9 @@ See [contributing](https://github.com/MSchmoecker/HammerTime/blob/master/CONTRIB
 
 
 ## Links
-- Thunderstore: https://valheim.thunderstore.io/package/MSchmoecker/HammerTime/
-- Nexus: https://www.nexusmods.com/valheim/mods/1864
-- Github: https://github.com/MSchmoecker/HammerTime
+- [Thunderstore](https://valheim.thunderstore.io/package/MSchmoecker/HammerTime/)
+- [Nexus](https://www.nexusmods.com/valheim/mods/1864)
+- [Github](https://github.com/MSchmoecker/HammerTime)
 - Discord: Margmas. Feel free to DM or ping me about feedback or questions, for example in the [Jötunn discord](https://discord.gg/DdUt6g7gyA)
 
 

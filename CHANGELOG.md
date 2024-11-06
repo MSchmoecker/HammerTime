@@ -1,5 +1,8 @@
 ## Changelog
 
+0.3.10
+- Fixed vanilla serving tray not being excluded from HammerTime
+
 0.3.9
 - Removed the process filter that prevented the mod from loading on linux devices
 
