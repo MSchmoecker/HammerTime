@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Jotunn.Configs;
 using Jotunn.Managers;
 
 namespace HammerTime {
@@ -13,7 +14,7 @@ namespace HammerTime {
         }
 
         public static bool IsVanillaPieceTable(string pieceTable) {
-            return pieceTable == "_HammerPieceTable" || pieceTable == "_HoePieceTable" || pieceTable == "_CultivatorPieceTable";
+            return pieceTable == PieceTables.Hammer || pieceTable == PieceTables.Hoe || pieceTable == PieceTables.Cultivator || pieceTable == PieceTables.ServingTray;
         }
     }
 }
