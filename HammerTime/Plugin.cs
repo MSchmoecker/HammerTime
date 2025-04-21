@@ -155,7 +155,8 @@ namespace HammerTime {
                     if (categoryIdToName.TryGetValue(pieceItem.originalCategory, out string value)) {
                         category = value;
                     } else {
-                        category = pieceItem.originalCategory.ToString();
+                        Log.LogWarning($"Skipping piece {pieceItem.gameObject.name} from {pieceItem.modName} with unknown category {pieceItem.originalCategory}");
+                        continue;
                     }
 
                     MovePieceItemToTable(pieceItem, "_HammerPieceTable", pieces.Key, category);
@@ -208,7 +209,12 @@ namespace HammerTime {
                     string originalCategory;
 
                     if (string.IsNullOrEmpty(pieceItem.overrideCategory)) {
-                        originalCategory = categoryIdToName[pieceItem.originalCategory];
+                        if (categoryIdToName.TryGetValue(pieceItem.originalCategory, out string cat)) {
+                            originalCategory = cat;
+                        } else {
+                            Log.LogWarning($"Skipping piece {pieceItem.gameObject.name} from {pieceItem.modName} with unknown category {pieceItem.originalCategory}");
+                            continue;
+                        }
                     } else {
                         originalCategory = pieceItem.overrideCategory;
                     }
