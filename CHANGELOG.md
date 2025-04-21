@@ -1,5 +1,8 @@
 ## Changelog
 
+0.3.11
+- Fixed an error if a piece with an unregistered piece category is found. Those pieces are now skipped and a warning is logged
+
 0.3.10
 - Fixed vanilla serving tray not being excluded from HammerTime
 

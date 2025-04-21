@@ -1,10 +1,10 @@
 {
 	"name": "HammerTime",
 	"description": "Moves all pieces from custom hammers to the vanilla hammer",
-	"version_number": "0.3.10",
+	"version_number": "0.3.11",
 	"website_url": "https://github.com/MSchmoecker/HammerTime",
 	"dependencies": [
 		"denikson-BepInExPack_Valheim-5.4.2202",
-		"ValheimModding-Jotunn-2.21.3"
+		"ValheimModding-Jotunn-2.24.3"
 	]
 }
